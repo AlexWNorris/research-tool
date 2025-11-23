@@ -1,0 +1,76 @@
+/* * General Page Layout 
+    * Mimics a standard A4 or Letter paper document 
+    */
+body {
+    font-family: "Calibri", "Segoe UI", Arial, sans-serif;
+    background-color: #f0f0f0;
+    /* Light gray background for the window */
+    color: #222;
+    line-height: 1.5;
+    margin: 0;
+    padding: 40px 20px;
+    display: flex;
+    justify-content: center;
+}
+
+/* The "Paper" Container */
+.document-container {
+    background-color: white;
+    max-width: 800px;
+    /* Standard readable width */
+    width: 100%;
+    padding: 60px 80px;
+    /* Generous margins like a real document */
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+    border: 1px solid #ddd;
+}
+
+/* * Typography 
+    */
+
+/* Target the divs to act like paragraphs/sections */
+div {
+    margin-bottom: 24px;
+    text-align: left;
+}
+
+/* Turn the <b> tags into proper block-level headings */
+div b {
+    display: block;
+    font-size: 16px;
+    font-weight: 700;
+    margin-bottom: 6px;
+    color: #000;
+}
+
+/* * Specific Styling based on your image reference 
+    */
+
+/* The first div acts as the main title */
+body>.document-container>div:first-child b {
+    font-size: 18px;
+    margin-bottom: 12px;
+}
+
+/* Styling for the red approval text */
+.approval-text {
+    color: #d80000;
+    font-weight: bold;
+    display: block;
+    margin-bottom: 10px;
+    text-transform: uppercase;
+    font-size: 0.9em;
+}
+
+/* Links */
+a {
+    color: #0044cc;
+    text-decoration: underline;
+}
+
+/* Mobile Responsiveness */
+@media (max-width: 600px) {
+    .document-container {
+        padding: 30px 20px;
+    }
+}

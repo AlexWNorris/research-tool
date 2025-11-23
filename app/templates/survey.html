@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="static\css\survey.css"> 
+    <title>Browser Fingerprinting Survey</title>
+</head>
+<body>
+
+<div class="card">
+    <h2>Browser Fingerprinting Survey</h2>
+
+    <form action="/submit-contact" method="POST">
+
+        <label for="age">What is your age group?</label>
+        <select id="age" name="age" required>
+            <option value="" disabled selected hidden>Select your age group...</option>
+            <option value="18-24">18-24</option>
+            <option value="25-34">25-34</option>
+            <option value="35-44">35-44</option>
+            <option value="45-54">45-54</option>
+            <option value="55-64">55-64</option>
+            <option value="65 or older">65 or older</option>
+        </select>
+
+        <label for="gender">How would you describe your gender?</label>
+        <select id="gender" name="gender" required>
+            <option value="" disabled selected hidden>Select your gender...</option>
+            <option value="Male">Male</option>
+            <option value="Female">Female</option>
+            <option value="Other">Other</option>
+        </select>
+
+        <label for="income">What was your total household income before taxes during the past 12 months?</label>
+        <select id="income" name="income" required>
+            <option value="" disabled selected hidden>Select an income range...</option>
+            <option value="Less than £15,000">Less than £15,000</option>
+            <option value="15,000 - £24,999">15,000 - £24,999</option>
+            <option value="£25,000 - £34,999">£25,000 - £34,999</option>
+            <option value="£35,000 - £44,999">£35,000 - £44,999</option>
+            <option value="£45,000 - £54,999">£45,000 - £54,999</option>
+            <option value="£55,000 or more">£55,000 or more</option>
+            <option value="Prefer not to say">Prefer not to say</option>
+        </select>
+
+        <label for="education">What is the highest level of education you currently hold?</label>
+        <select id="education" name="education" required>
+            <option value="" disabled selected hidden>Select your education level...</option>
+            <option value="School-level">School-level qualifications (e.g., GCSEs...)</option>
+            <option value="Further Education">Further Education / Advanced qualifications...</option>
+            <option value="Higher Education">Higher Education (University-level)...</option>
+            <option value="Bachelor's Degree">Bachelor's Degree (e.g., BA Hons...)</option>
+            <option value="Postgraduate Degree">Postgraduate Degree (e.g., Master's...)</option>
+            <option value="No formal qualifications">No formal qualifications</option>
+            <option value="Currently studying">Currently studying...</option>
+        </select>
+
+        <button type="submit">Submit Survey</button>
+    </form>
+</div>
+
+</body>
+</html>
