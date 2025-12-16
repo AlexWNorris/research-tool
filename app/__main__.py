@@ -59,19 +59,8 @@ def fingerprint():
             'fingerprint': fingerprint_data
         }
         
-        # Ensure data directory exists
-        data_dir = os.path.join(app.root_path, '..', 'data')
-        os.makedirs(data_dir, exist_ok=True)
-        
-        # Save to file
-        filename = f"participant_{full_data['session_id']}.json"
-        filepath = os.path.join(data_dir, filename)
-        
-        with open(filepath, 'w') as f:
-            json.dump(full_data, f, indent=4)
-            
         # Upload to OneDrive
-        # We upload the JSON string content
+        # upload the JSON string content
         try:
             json_content = json.dumps(full_data, indent=4)
             if onedrive_utils.upload_file(json_content, filename):
