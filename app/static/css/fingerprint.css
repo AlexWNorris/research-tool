@@ -1,0 +1,54 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 20px;
+    background-color: #f4f4f4;
+}
+
+/* Container for the table and navigation controls */
+.table-container {
+    position: relative;
+    background-color: #1a4d6f; /* Dark blue background from wireframe */
+    border: 1px solid #ccc;
+    height: 70vh; /* Set a specific height for vertical scrolling */
+    overflow-y: auto; /* Enable vertical scrolling */
+    padding: 10px;
+    margin-bottom: 20px;
+}
+
+/* Styling for the table inside the container */
+#attributesTable {
+    width: 100%;
+    border-collapse: collapse;
+    color: white;
+    text-align: left;
+}
+
+#attributesTable th, #attributesTable td {
+    padding: 8px 12px;
+    border-bottom: 1px solid #3b6c8a; /* Lighter line for separation */
+}
+
+#attributesTable th {
+    background-color: #1a4d6f;
+    position: sticky; /* Keep header visible during scroll */
+    top: 0;
+    z-index: 10;
+}
+
+
+/* Button styling */
+#consentButton {
+    float: right;
+    padding: 10px 20px;
+    background-color: #3b6c8a; /* Button color */
+    color: white;
+    border: none;
+    cursor: pointer;
+    font-size: 16px;
+    text-transform: uppercase;
+}
+
+#consentButton:hover {
+    background-color: #2c526d;
+}

@@ -13,8 +13,13 @@ def concent_form():
 def survey():
     return render_template("survey.html")
 
+@app.route('/fingerprint')
+def fingerprint():
+    return render_template("fingerprint.html")
 
-
+@app.route('/thankyou')
+def thankyou():
+    pass
 # main driver function
 if __name__ == '__main__':
     app.run()
