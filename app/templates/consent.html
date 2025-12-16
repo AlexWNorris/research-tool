@@ -88,8 +88,19 @@
         </div>
 
         <div>
-            <b>Consent</b>
-            <!-- The HTML ended here, but typically a form would follow -->
+    <b>Consent</b>
+            <p>
+                By clicking "I Agree" below, you confirm that you have read the above information and agree to participate in this study.
+            </p>
+            <form action="/" method="POST" style="margin-top: 20px;">
+                <label style="display: flex; align-items: center; gap: 10px; margin-bottom: 20px; cursor: pointer;">
+                    <input type="checkbox" required name="consent_check" id="consent_check">
+                    <span>I have read the information above and understand what this study involves.</span>
+                </label>
+                <div style="text-align: center;">
+                    <button type="submit" class="consent-btn">I Agree to Participate</button>
+                </div>
+            </form>
         </div>
 
     </section>

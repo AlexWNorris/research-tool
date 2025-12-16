@@ -5,7 +5,7 @@ const fpPromise = import('https://openfpcdn.io/fingerprintjs/v5')
 // 2. Function to build and display the table
 function displayAttributes(attributesList) {
     const tableBody = document.querySelector('#attributesTable tbody');
-    
+
     // Clear existing rows if any
     tableBody.innerHTML = '';
 
@@ -13,11 +13,11 @@ function displayAttributes(attributesList) {
         if (attributesList.hasOwnProperty(key)) {
             const component = attributesList[key];
             const row = tableBody.insertRow();
-            
+
             // Column 1: Attribute Name
             const cellName = row.insertCell(0);
             cellName.textContent = key;
-            
+
             // Column 2: Value
             const cellValue = row.insertCell(1);
             // Handle complex values (like objects/arrays) by stringifying them
@@ -48,14 +48,34 @@ document.addEventListener('DOMContentLoaded', () => {
         .then(result => {
             const attributesList = result.components;
             displayAttributes(attributesList);
-            
+
+            // Attach event listener to consent button
             // Attach event listener to consent button
             document.getElementById('consentButton').addEventListener('click', () => {
-                console.log('Consent given! Sending data:', {
+                const data = {
                     visitorId: result.visitorId,
                     components: attributesList
-                });
-                alert('Consent registered! Check console for data being sent.');
+                };
+
+                fetch('/fingerprint', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(data),
+                })
+                    .then(response => {
+                        if (response.ok) {
+                            window.location.href = "/thankyou";
+                        } else {
+                            alert('Error submitting data via fetch.');
+                            console.error('Network response was not ok.');
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        alert('An error occurred.');
+                    });
             });
         })
         .catch(error => {
