@@ -1,19 +1,12 @@
-<!DOCTYPE html>
-<html lang="en">
+{% extends "base.html" %}
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Thank You</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/thankyou.css') }}">
-</head>
+{% block title %}Thank You - University of Exeter Research{% endblock %}
 
-<body>
-    <div class="container">
-        <h1>Thank You!</h1>
-        <p>Your participation is greatly appreciated.</p>
-        <p>Your data has been securely recorded.</p>
-    </div>
-</body>
-
-</html>
+{% block content %}
+<div class="container card card-sm text-center" style="padding: 60px 40px;">
+    <h1 style="color: var(--exeter-deep-green);">Thank You!</h1>
+    <p>Your participation is greatly appreciated.</p>
+    <p>Your data has been securely recorded.</p>
+    <p>You may now close this tab</p>
+</div>
+{% endblock %}

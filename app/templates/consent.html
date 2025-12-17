@@ -1,37 +1,32 @@
-<!DOCTYPE html>
-<html lang="en">
+{% extends "base.html" %}
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <link rel="stylesheet" href="static\css\consent.css"> 
-    <title>Document</title>
-</head>
+{% block title %}Consent - University of Exeter Research{% endblock %}
 
-<body>
-    <section class="document-container">
-        
+{% block content %}
+<div class="container card card-md">
+    <div class="document-content">
+        <h1>Web privacy for whom: Demographic Vulnerability to browser fingerprinting</h1>
+
         <div>
-            <b>Web privacy for whom: Demographic Vulnerability to browser fingerprinting</b>
-            You are being invited to take part in an academic research study. Before you decide to participate in this
-            study, it is important that you understand why the research is being done and what it will involve. Please take
-            the time to read the following information carefully
+            <b>You are being invited to take part in an academic research study.</b><br>
+            Before you decide to participate in this study, it is important that you understand why the research is
+            being done and what it will involve. Please take the time to read the following information carefully.
         </div>
 
         <div>
-            <b>Purpose of the research</b>
+            <h4>Purpose of the research</h4>
             The purpose of the research is to understand if different people are more at risk of being tracked on the
             internet than others.
         </div>
 
         <div>
-            <b>Who is doing this research?</b>
-            The lead researcher of this study is Alexander Norris, Alexander is an undergraduate student in the department
-            of computer science. There are no other researchers involved in this study
+            <h4>Who is doing this research?</h4>
+            The lead researcher of this study is Alexander Norris, Alexander is an undergraduate student in the
+            department of computer science. There are no other researchers involved in this study.
         </div>
 
         <div>
-            <b>Why have I been approached?</b>
+            <h4>Why have I been approached?</h4>
             This research aims to have a sample of people that represent users on the internet, this includes people of
             different ages, genders and backgrounds.
             <br><br>
@@ -39,71 +34,68 @@
         </div>
 
         <div>
-            <b>Ethical review of this Research</b>
-            <!-- Wrapped the specific red text in a span to target it with CSS -->
-            <span class="approval-text">-TO BE FILLED AFTER APPROVAL PROCESS-</span>
+            <h4>Ethical review of this Research</h4>
+            <span style="color:red; font-weight:bold;">-TO BE FILLED AFTER APPROVAL PROCESS-</span><br>
             This study has been reviewed by the [Name] Research Ethics Committee and received a favourable review. The
             review reference is [number]. The [Name] Ethics Committee may be contacted by email [Name]@exeter.ac.uk
         </div>
 
         <div>
-            <b>Procedures of this study</b>
+            <h4>Procedures of this study</h4>
             Your role in this study should take no longer than 10 minutes.
             You will be asked 4 questions about your: Age, Gender, Income and Education.
-            You will then be asked permission to collect some information about your web browser. You will be shown the full
-            list of this information and will be able to decide whether you would like to share it for use in this research.
+            You will then be asked permission to collect some information about your web browser. You will be shown the
+            full list of this information and will be able to decide whether you would like to share it for use in this
+            research.
         </div>
 
         <div>
-            <b>Benefits and risks of taking part</b>
-            There is unlikely to be any direct or personal benefit to you in taking part. There may be some
-            benefit to society; but this cannot be assured at the start of the research project. There is some risk in
-            taking part in this survey. If a data breach occurs, your information may be used by third parties to identify
-            you on the internet.
+            <h4>Benefits and risks of taking part</h4>
+            There is unlikely to be any direct or personal benefit to you in taking part. There may be some benefit to
+            society; but this cannot be assured at the start of the research project. There is some risk in taking part
+            in this survey. If a data breach occurs, your information may be used by third parties to identify you on
+            the internet.
         </div>
 
         <div>
-            <b>Voluntary participation and your right to withdraw</b>
-            Your participation in this study is entirely voluntary. You are under no obligation to take part, and you may
-            stop at any time. If you stop before completing the survey your information will not be saved and you will not
-            have completed the survey. Withdrawal after participation is possible and can be done via email request to
-            <a href="mailto:an631@exeter.ac.uk">an631@exeter.ac.uk</a>
+            <h4>Voluntary participation and your right to withdraw</h4>
+            Your participation in this study is entirely voluntary. You are under no obligation to take part, and you
+            may stop at any time. If you stop before completing the survey your information will not be saved and you
+            will not have completed the survey. Withdrawal after participation is possible and can be done via email
+            request to <a href="mailto:an631@exeter.ac.uk">an631@exeter.ac.uk</a>.
         </div>
 
         <div>
-            <b>Anonymity</b>
+            <h4>Anonymity</h4>
             Your name is not required in this survey. There will be question about some personal characteristics such as
-            age, gender income and education. The information collected about your web browser, may have the capability to
-            identify you on the internet.
+            age, gender income and education. The information collected about your web browser, may have the capability
+            to identify you on the internet.
             <br><br>
-            The Data Controller for this research is the University of Exeter. You may contact the Information Governance
-            office of the University of Exeter by emailing <a href="mailto:dataprotection@exeter.ac.uk">dataprotection@exeter.ac.uk</a>
+            The Data Controller for this research is the University of Exeter. You may contact the Information
+            Governance office of the University of Exeter by emailing <a
+                href="mailto:dataprotection@exeter.ac.uk">dataprotection@exeter.ac.uk</a>.
             <br><br>
-            <a href="https://www.exeter.ac.uk/v8media/universityofexeter/governanceandcompliance/researchethicsandgovernance/UoE_Research_Generic_Privacy_Notice_v1.1_16012020.pdf">University of Exeter Data Protection for Research Statement</a>
+            <a
+                href="https://www.exeter.ac.uk/v8media/universityofexeter/governanceandcompliance/researchethicsandgovernance/UoE_Research_Generic_Privacy_Notice_v1.1_16012020.pdf">University
+                of Exeter Data Protection for Research Statement</a>
         </div>
 
-        <div>
-            <b>The Results</b>
-            The results of this study will be used in a undergraduate dissertation project and will be publicly available.
-        </div>
-
-        <div>
-    <b>Consent</b>
+        <div style="margin-top: 40px; padding-top: 20px; border-top: 1px solid #eee;">
+            <h3>Consent</h3>
             <p>
-                By clicking "I Agree" below, you confirm that you have read the above information and agree to participate in this study.
+                By clicking "I Agree" below, you confirm that you have read the above information and agree to
+                participate in this study.
             </p>
-            <form action="/" method="POST" style="margin-top: 20px;">
-                <label style="display: flex; align-items: center; gap: 10px; margin-bottom: 20px; cursor: pointer;">
+            <form action="{{ url_for('consent_form') }}" method="POST" style="margin-top: 20px;">
+                <label class="checkbox-group">
                     <input type="checkbox" required name="consent_check" id="consent_check">
                     <span>I have read the information above and understand what this study involves.</span>
                 </label>
-                <div style="text-align: center;">
-                    <button type="submit" class="consent-btn">I Agree to Participate</button>
+                <div class="text-center mt-4">
+                    <button type="submit" class="btn btn-primary">I Agree to Participate</button>
                 </div>
             </form>
         </div>
-
-    </section>
-</body>
-
-</html>
+    </div>
+</div>
+{% endblock %}

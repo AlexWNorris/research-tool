@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}University of Exeter Research{% endblock %}</title>
+    <!-- Favicon could be added here -->
+
+    <!-- CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    {% block extra_css %}{% endblock %}
+</head>
+
+<body>
+
+    <header>
+        <div class="container">
+            <!-- Ensure exact path to logo matches file system -->
+            <img src="{{ url_for('static', filename='img/university logo.png') }}" alt="University of Exeter"
+                class="university-logo">
+        </div>
+    </header>
+
+    <main>
+        {% block content %}{% endblock %}
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>&copy; {{ now.year if now else 2024 }} University of Exeter. All rights reserved.</p>
+            <p><a href="#">Privacy Policy</a> | <a href="#">Accessibility</a></p>
+        </div>
+    </footer>
+
+    {% block scripts %}{% endblock %}
+</body>
+
+</html>

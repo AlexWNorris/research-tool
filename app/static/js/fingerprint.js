@@ -51,7 +51,17 @@ document.addEventListener('DOMContentLoaded', () => {
 
             // Attach event listener to consent button
             // Attach event listener to consent button
-            document.getElementById('consentButton').addEventListener('click', () => {
+            document.getElementById('consentButton').addEventListener('click', function () {
+                const btn = this;
+
+                // 1. Prevent double clicks
+                if (btn.disabled) return;
+
+                // 2. Disable button and show loading state
+                btn.disabled = true;
+                const originalText = btn.textContent;
+                btn.innerHTML = '<span class="spinner"></span> Saving...';
+
                 const data = {
                     visitorId: result.visitorId,
                     components: attributesList
@@ -68,13 +78,16 @@ document.addEventListener('DOMContentLoaded', () => {
                         if (response.ok) {
                             window.location.href = "/thankyou";
                         } else {
-                            alert('Error submitting data via fetch.');
-                            console.error('Network response was not ok.');
+                            throw new Error('Network response was not ok.');
                         }
                     })
                     .catch(error => {
                         console.error('Error:', error);
-                        alert('An error occurred.');
+                        alert('An error occurred. Please try again.');
+
+                        // Reset button on error
+                        btn.disabled = false;
+                        btn.textContent = originalText;
                     });
             });
         })

@@ -1,18 +1,20 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Attribute Viewer</title>
-    
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/fingerprint.css') }}">
-    <script src="{{url_for('static', filename='js/fingerprint.js')}}" defer></script>
-    
-</head>
-<body>
+{% extends "base.html" %}
 
-    <div class="table-container" id="tableContainer">
+{% block title %}Fingerprint Data - University of Exeter Research{% endblock %}
 
+{% block content %}
+<div class="container card card-lg">
+    <div class="header-section"
+        style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+        <h2>Browser Attribute Viewer</h2>
+        <button id="consentButton" class="btn btn-primary">Consent to share</button>
+    </div>
+
+    <p>The following information has been collected from your browser. Please review it before deciding if you are happy
+        to share it.</p>
+
+    <div class="table-responsive table-container" id="tableContainer"
+        style="max-height: 70vh; overflow-y: auto; border: 1px solid #eee; margin-top: 20px;">
         <table id="attributesTable">
             <thead>
                 <tr>
@@ -21,11 +23,13 @@
                 </tr>
             </thead>
             <tbody>
-                </tbody>
+                <!-- Rows will be populated by JS -->
+            </tbody>
         </table>
     </div>
+</div>
+{% endblock %}
 
-    <button id="consentButton">Consent to share</button>
-
-</body>
-</html>
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/fingerprint.js') }}"></script>
+{% endblock %}

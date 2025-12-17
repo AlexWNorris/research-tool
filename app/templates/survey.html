@@ -1,20 +1,15 @@
-<!DOCTYPE html>
-<html lang="en">
+{% extends "base.html" %}
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/survey.css') }}">
-    <title>Browser Fingerprinting Survey</title>
-</head>
+{% block title %}Survey - University of Exeter Research{% endblock %}
 
-<body>
+{% block content %}
+<div class="container card card-sm">
+    <h2 class="text-center">Demographic Survey</h2>
+    <p class="text-center mb-2">Please answer the following questions.</p>
 
-    <div class="card">
-        <h2>Browser Fingerprinting Survey</h2>
+    <form action="{{ url_for('survey') }}" method="POST">
 
-        <form action="{{ url_for('survey') }}" method="POST">
-
+        <div class="form-group">
             <label for="age">What is your age group?</label>
             <select id="age" name="age" required>
                 <option value="" disabled selected hidden>Select your age group...</option>
@@ -25,7 +20,9 @@
                 <option value="55-64">55-64</option>
                 <option value="65 or older">65 or older</option>
             </select>
+        </div>
 
+        <div class="form-group">
             <label for="gender">How would you describe your gender?</label>
             <select id="gender" name="gender" required>
                 <option value="" disabled selected hidden>Select your gender...</option>
@@ -33,7 +30,9 @@
                 <option value="Female">Female</option>
                 <option value="Other">Other</option>
             </select>
+        </div>
 
+        <div class="form-group">
             <label for="income">What was your total household income before taxes during the past 12 months?</label>
             <select id="income" name="income" required>
                 <option value="" disabled selected hidden>Select an income range...</option>
@@ -45,23 +44,25 @@
                 <option value="£55,000 or more">£55,000 or more</option>
                 <option value="Prefer not to say">Prefer not to say</option>
             </select>
+        </div>
 
-            <label for="education">What is the highest level of education you currently hold?</label>
+        <div class="form-group">
+            <label for="education">what is the highest level of education you have completed?</label>
             <select id="education" name="education" required>
                 <option value="" disabled selected hidden>Select your education level...</option>
-                <option value="School-level">School-level qualifications (e.g., GCSEs...)</option>
-                <option value="Further Education">Further Education / Advanced qualifications...</option>
-                <option value="Higher Education">Higher Education (University-level)...</option>
-                <option value="Bachelor's Degree">Bachelor's Degree (e.g., BA Hons...)</option>
-                <option value="Postgraduate Degree">Postgraduate Degree (e.g., Master's...)</option>
+                <option value="School-level">School-level qualifications (e.g., GCSEs, O-Levels)</option>
+                <option value="Further Education">Further Education / Advanced qualifications (e.g., A-Levels, BTEC)
+                </option>
+                <option value="Higher Education">Higher Education (University-level, e.g., HND, Foundation Degree)
+                </option>
+                <option value="Bachelor's Degree">Bachelor's Degree (e.g., BA, BSc, BEng)</option>
+                <option value="Postgraduate Degree">Postgraduate Degree (e.g., MA, MSc, PhD)</option>
                 <option value="No formal qualifications">No formal qualifications</option>
-                <option value="Currently studying">Currently studying...</option>
+                <option value="Currently studying">Currently studying</option>
             </select>
+        </div>
 
-            <button type="submit">Submit Survey</button>
-        </form>
-    </div>
-
-</body>
-
-</html>
+        <button type="submit" class="btn btn-primary" style="width: 100%;">Submit Survey</button>
+    </form>
+</div>
+{% endblock %}
