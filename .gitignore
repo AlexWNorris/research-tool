@@ -1,7 +1,0 @@
-/env
-.gitignore
-/data
-*.pdf
-test_output.txt
-token_cache.bin
-*.pyc
