@@ -1,7 +1,6 @@
 import os
 import msal
 import requests
-import json
 
 # Configuration
 # Modes: 'PERSONAL' (Delegated) or 'ORGANIZATION' (Client Credentials)
@@ -10,21 +9,26 @@ AUTH_MODE = os.environ.get('ONEDRIVE_AUTH_MODE', 'PERSONAL').upper()
 CLIENT_ID = os.environ.get('ONEDRIVE_CLIENT_ID')
 CLIENT_SECRET = os.environ.get('ONEDRIVE_CLIENT_SECRET')
 TENANT_ID = os.environ.get('ONEDRIVE_TENANT_ID')
-USER_ID = os.environ.get('ONEDRIVE_USER_ID') # Required for Organization mode
+USER_ID = os.environ.get('ONEDRIVE_USER_ID')
+
 
 # Cache file for Personal mode to avoid repeated logins
 TOKEN_CACHE_FILE = 'token_cache.bin'
 
+
 def _load_cache():
     cache = msal.SerializableTokenCache()
     if os.path.exists(TOKEN_CACHE_FILE):
-        cache.deserialize(open(TOKEN_CACHE_FILE, "r").read())
+        with open(TOKEN_CACHE_FILE, "r") as f:
+            cache.deserialize(f.read())
     return cache
+
 
 def _save_cache(cache):
     if cache.has_state_changed:
         with open(TOKEN_CACHE_FILE, "w") as f:
             f.write(cache.serialize())
+
 
 def get_access_token():
     """
@@ -35,8 +39,10 @@ def get_access_token():
     elif AUTH_MODE == 'ORGANIZATION':
         return _get_org_token()
     else:
-        print(f"Error: Unknown ONEDRIVE_AUTH_MODE '{AUTH_MODE}'. Use 'PERSONAL' or 'ORGANIZATION'.")
+        print(f"Error: Unknown ONEDRIVE_AUTH_MODE '{AUTH_MODE}'. "
+              "Use 'PERSONAL' or 'ORGANIZATION'.")
         return None
+
 
 def _get_personal_token():
     """
@@ -79,12 +85,14 @@ def _get_personal_token():
         print(result.get('error_description'))
         return None
 
+
 def _get_org_token():
     """
     Client Credentials Flow (Daemon) for Organization Accounts.
     """
     if not all([CLIENT_ID, CLIENT_SECRET, TENANT_ID]):
-        print("Error: CLIENT_ID, CLIENT_SECRET, and TENANT_ID are required for Organization mode.")
+        print("Error: CLIENT_ID, CLIENT_SECRET, and TENANT_ID are required "
+              "for Organization mode.")
         return None
 
     authority = f"https://login.microsoftonline.com/{TENANT_ID}"
@@ -97,12 +105,13 @@ def _get_org_token():
     )
 
     result = app.acquire_token_for_client(scopes=scope)
-    
+
     if "access_token" in result:
         return result["access_token"]
     else:
         print(f"Error acquiring org token: {result.get('error')}")
         return None
+
 
 def upload_file(file_content, filename):
     """
@@ -120,15 +129,21 @@ def upload_file(file_content, filename):
     # Construct URL based on mode
     if AUTH_MODE == 'PERSONAL':
         # Personal accounts can use /me
-        url = f'https://graph.microsoft.com/v1.0/me/drive/root:/ResearchData/{filename}:/content'
+        url = (f'https://graph.microsoft.com/v1.0/me/drive/root:/'
+               f'ResearchData/{filename}:/content')
     else:
         # Org accounts (Daemon) usually need to specify a user
         if not USER_ID:
-             print("Warning: ONEDRIVE_USER_ID not set. Uploading to 'me' might fail in Org mode.")
-             # Fallback, though likely to fail for Daemon without a user context
-             url = f'https://graph.microsoft.com/v1.0/users/{USER_ID}/drive/root:/ResearchData/{filename}:/content'
+            print("Warning: ONEDRIVE_USER_ID not set. "
+                  "Uploading to 'me' might fail in Org mode.")
+        
+        target_user = USER_ID if USER_ID else 'me'
+        if target_user == 'me':
+             url = (f'https://graph.microsoft.com/v1.0/me/drive/root:/'
+                    f'ResearchData/{filename}:/content')
         else:
-             url = f'https://graph.microsoft.com/v1.0/users/{USER_ID}/drive/root:/ResearchData/{filename}:/content'
+             url = (f'https://graph.microsoft.com/v1.0/users/{target_user}/'
+                    f'drive/root:/ResearchData/{filename}:/content')
 
     try:
         print(f"Attempting upload to: {url}")
@@ -139,5 +154,5 @@ def upload_file(file_content, filename):
     except requests.exceptions.RequestException as e:
         print(f"Failed to upload to OneDrive: {e}")
         if 'response' in locals() and response is not None:
-             print(f"Response: {response.text}")
+            print(f"Response: {response.text}")
         return False
