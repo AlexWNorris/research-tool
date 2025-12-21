@@ -34,7 +34,8 @@ def survey():
             'age': request.form.get('age'),
             'gender': request.form.get('gender'),
             'income': request.form.get('income'),
-            'education': request.form.get('education')
+            'education': request.form.get('education'),
+            'email': request.form.get('email')
         }
         return redirect(url_for('fingerprint'))
 
