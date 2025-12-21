@@ -1,6 +1,7 @@
 import os
 import json
 import uuid
+import hashlib
 from datetime import datetime
 from flask import Flask, render_template, request, session, redirect, url_for, jsonify
 import onedrive_utils
@@ -30,12 +31,18 @@ def survey():
 
     if request.method == 'POST':
         # Collect form data
+        email = request.form.get('email')
+        hashed_email = None
+        if email:
+             # Normalize and hash
+            hashed_email = hashlib.sha256(email.lower().strip().encode('utf-8')).hexdigest()
+
         session['survey_data'] = {
             'age': request.form.get('age'),
             'gender': request.form.get('gender'),
             'income': request.form.get('income'),
             'education': request.form.get('education'),
-            'email': request.form.get('email')
+            'email': hashed_email
         }
         return redirect(url_for('fingerprint'))
 
