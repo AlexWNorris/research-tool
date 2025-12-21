@@ -3,7 +3,7 @@ import json
 import uuid
 import hashlib
 from datetime import datetime
-from flask import Flask, render_template, request, session, redirect, url_for, jsonify
+from flask import Flask, render_template, request, session, redirect, url_for, jsonify, make_response
 import onedrive_utils
 
 app = Flask(__name__)
@@ -15,6 +15,9 @@ def consent_form():
     """
     Render consent form or handle consent submission.
     """
+    if request.cookies.get('survey_completed'):
+        return redirect(url_for('thankyou'))
+
     if request.method == 'POST':
         session['consent'] = True
         return redirect(url_for('survey'))
@@ -26,6 +29,9 @@ def survey():
     """
     Render survey form or handle survey submission.
     """
+    if request.cookies.get('survey_completed'):
+        return redirect(url_for('thankyou'))
+
     if not session.get('consent'):
         return redirect(url_for('consent_form'))
 
@@ -86,7 +92,10 @@ def fingerprint():
         # Optional: Clear session data if no longer needed
         # session.pop('survey_data', None)
 
-        return jsonify({'status': 'success'}), 200
+        resp = make_response(jsonify({'status': 'success'}))
+        # Set cookie to expire in 1 year (365 days * 24 hours * 60 minutes * 60 seconds)
+        resp.set_cookie('survey_completed', 'true', max_age=31536000)
+        return resp, 200
 
     return render_template("fingerprint.html")
 
