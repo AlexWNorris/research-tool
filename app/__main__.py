@@ -93,7 +93,7 @@ def fingerprint():
         # session.pop('survey_data', None)
 
         resp = make_response(jsonify({'status': 'success'}))
-        # Set cookie to expire in 1 year (365 days * 24 hours * 60 minutes * 60 seconds)
+        # Set cookie to expire in 1 year (365 days = 24 hours * 60 minutes * 60 seconds)
         resp.set_cookie('survey_completed', 'true', max_age=31536000)
         return resp, 200
 
