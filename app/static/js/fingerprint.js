@@ -50,7 +50,6 @@ document.addEventListener('DOMContentLoaded', () => {
             displayAttributes(attributesList);
 
             // Attach event listener to consent button
-            // Attach event listener to consent button
             document.getElementById('consentButton').addEventListener('click', function () {
                 const btn = this;
 
