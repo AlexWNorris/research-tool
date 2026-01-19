@@ -21,7 +21,7 @@ def consent_form():
     if request.method == 'POST':
         session['consent'] = True
         return redirect(url_for('survey'))
-    return render_template("consent.html")
+    return render_template("consent.html", current_step=1, total_steps=3)
 
 
 @app.route('/survey', methods=['GET', 'POST'])
@@ -52,7 +52,7 @@ def survey():
         }
         return redirect(url_for('fingerprint'))
 
-    return render_template("survey.html")
+    return render_template("survey.html", current_step=2, total_steps=3)
 
 
 @app.route('/fingerprint', methods=['GET', 'POST'])
@@ -97,7 +97,7 @@ def fingerprint():
         resp.set_cookie('survey_completed', 'true', max_age=31536000)
         return resp, 200
 
-    return render_template("fingerprint.html")
+    return render_template("fingerprint.html", current_step=3, total_steps=3)
 
 
 @app.route('/thankyou')

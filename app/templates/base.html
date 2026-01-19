@@ -19,6 +19,15 @@
             <!-- Ensure exact path to logo matches file system -->
             <img src="{{ url_for('static', filename='img/university logo.png') }}" alt="University of Exeter"
                 class="university-logo">
+            {% if current_step %}
+            <div class="progress-counter">
+                {% for i in range(1, total_steps + 1) %}
+                <div class="progress-circle {% if i == current_step %}active{% endif %}">
+                    {{ i }}
+                </div>
+                {% endfor %}
+            </div>
+            {% endif %}
         </div>
     </header>
 
@@ -28,8 +37,7 @@
 
     <footer>
         <div class="container">
-            <p>&copy; {{ now.year if now else 2024 }} University of Exeter. All rights reserved.</p>
-            <p><a href="#">Privacy Policy</a> | <a href="#">Accessibility</a></p>
+            <p>&copy; {{ now.year if now else 2026 }} University of Exeter. All rights reserved.</p>
         </div>
     </footer>
 
