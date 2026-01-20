@@ -4,9 +4,16 @@
 
 {% block content %}
 <div class="container card card-sm text-center" style="padding: 60px 40px;">
+    {% if consent == 'no' %}
+    <h1 style="color: var(--exeter-deep-green);">Thank You</h1>
+    <p>Thank you for your time. We understand your decision not to share your browser attributes.</p>
+    <p>None of your information has been recorded.</p>
+    <p>You may now close this tab.</p>
+    {% else %}
     <h1 style="color: var(--exeter-deep-green);">Thank You!</h1>
     <p>Your participation is greatly appreciated.</p>
     <p>Your data has been securely recorded.</p>
     <p>You may now close this tab.</p>
+    {% endif %}
 </div>
 {% endblock %}

@@ -7,7 +7,28 @@
     <div class="header-section"
         style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
         <h2>Browser Attribute Viewer</h2>
-        <button id="consentButton" class="btn btn-primary">Consent to share</button>
+        <div style="display: flex; gap: 10px;">
+            <button id="infoButton" class="btn btn-secondary">What am I looking at?</button>
+            <button id="consentButton" class="btn btn-primary">Consent to share</button>
+            <button id="noConsentButton" class="btn btn-danger">Do not consent to share</button>
+        </div>
+    </div>
+
+    <!-- Info Modal -->
+    <div id="infoModal" class="modal-overlay" style="display: none;">
+        <div class="card card-md modal-card">
+            <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 20px;">
+                <h3 style="margin-bottom: 0;">What am I looking at?</h3>
+                <span class="close-modal" style="cursor: pointer; font-size: 1.5rem; line-height: 1;">&times;</span>
+            </div>
+            <p>This table shows information about your internet browser that is provided to websites when you visit
+                them.</p>
+            <p>This data includes details about your screen size, operating system, browser version, how your computer
+                draws shapes to the screen and more.</p>
+            <p>This information can be used by websites to identify you across the internet. We would like
+                to collect this information from you inorder to study if different people are more at risk from this
+                tracking technique. If you do not wish to share these details, click "Do not Consent to share"</p>
+        </div>
     </div>
 
     <p>The following information has been collected from your browser. Please review it before deciding if you are happy

@@ -89,6 +89,14 @@ document.addEventListener('DOMContentLoaded', () => {
                         btn.textContent = originalText;
                     });
             });
+
+            // Attach event listener to NO consent button
+            const noConsentBtn = document.getElementById('noConsentButton');
+            if (noConsentBtn) {
+                noConsentBtn.addEventListener('click', function () {
+                    window.location.href = "/thankyou?consent=no";
+                });
+            }
         })
         .catch(error => {
             console.error('Error loading FingerprintJS:', error);
@@ -97,4 +105,25 @@ document.addEventListener('DOMContentLoaded', () => {
             row.insertCell(0).textContent = 'Error';
             row.insertCell(1).textContent = 'Failed to load attributes.';
         });
+
+    // Info Modal Logic
+    const infoButton = document.getElementById('infoButton');
+    const infoModal = document.getElementById('infoModal');
+    const closeModal = document.querySelector('.close-modal');
+
+    if (infoButton && infoModal && closeModal) {
+        infoButton.addEventListener('click', () => {
+            infoModal.style.display = 'flex';
+        });
+
+        closeModal.addEventListener('click', () => {
+            infoModal.style.display = 'none';
+        });
+
+        window.addEventListener('click', (e) => {
+            if (e.target === infoModal) {
+                infoModal.style.display = 'none';
+            }
+        });
+    }
 });

@@ -105,7 +105,8 @@ def thankyou():
     """
     Render thank you page.
     """
-    return render_template("thankyou.html")
+    consent = request.args.get('consent', 'yes')
+    return render_template("thankyou.html", consent=consent)
 
 
 # main driver function

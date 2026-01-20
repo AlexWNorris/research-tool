@@ -327,3 +327,67 @@ tr:hover {
     cursor: not-allowed;
     pointer-events: none;
 }
+
+.btn-secondary {
+    background-color: #ffffff;
+    color: var(--exeter-deep-green);
+    border: 1px solid var(--exeter-deep-green);
+}
+
+.btn-secondary:hover {
+    background-color: #f0f8f7;
+    /* Very light green tint */
+    color: var(--exeter-dark-green);
+    border-color: var(--exeter-dark-green);
+}
+
+.btn-danger {
+    background-color: #ffffff;
+    color: #d9534f;
+    border: 1px solid #d9534f;
+}
+
+.btn-danger:hover {
+    background-color: #d9534f;
+    color: white;
+    border-color: #d9534f;
+}
+
+/* Modal Styles */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    backdrop-filter: blur(2px);
+}
+
+.modal-card {
+    background-color: #fff;
+    max-height: 90vh;
+    overflow-y: auto;
+    position: relative;
+    animation: fadeIn 0.2s ease-out;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.close-modal:hover {
+    color: var(--exeter-highlight-green);
+}
