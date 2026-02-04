@@ -49,6 +49,7 @@ document.addEventListener('DOMContentLoaded', () => {
             // Success: Hide warning, show table
             document.getElementById('fingerprintWarning').style.display = 'none';
             document.getElementById('tableContainer').style.display = 'block';
+            document.getElementById('actionButtons').style.display = 'flex';
 
             const attributesList = result.components;
             displayAttributes(attributesList);
