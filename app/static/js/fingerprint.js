@@ -46,6 +46,10 @@ document.addEventListener('DOMContentLoaded', () => {
     fpPromise
         .then(fp => fp.get({ extendedResult: true }))
         .then(result => {
+            // Success: Hide warning, show table
+            document.getElementById('fingerprintWarning').style.display = 'none';
+            document.getElementById('tableContainer').style.display = 'block';
+
             const attributesList = result.components;
             displayAttributes(attributesList);
 
