@@ -4,7 +4,7 @@ import uuid
 import hashlib
 from datetime import datetime
 from flask import Flask, render_template, request, session, redirect, url_for, jsonify, make_response
-import onedrive_utils
+
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'dev-secret-key'  # TODO: Change this in production
@@ -77,17 +77,20 @@ def fingerprint():
             'fingerprint': fingerprint_data
         }
 
-        # Upload to OneDrive
+        # Save to local file
         filename = f"data_{session_id}.json"
+        data_dir = os.path.join(app.root_path, 'data')
         
         try:
-            json_content = json.dumps(full_data, indent=4)
-            if onedrive_utils.upload_file(json_content, filename):
-                print(f"Successfully uploaded {filename} to OneDrive")
-            else:
-                print("OneDrive upload failed.")
+            os.makedirs(data_dir, exist_ok=True)
+            filepath = os.path.join(data_dir, filename)
+            
+            with open(filepath, 'w') as f:
+                json.dump(full_data, f, indent=4)
+                
+            print(f"Successfully saved {filename} locally")
         except Exception as e:
-            print(f"Error during OneDrive upload: {e}")
+            print(f"Error saving data locally: {e}")
 
         # Optional: Clear session data if no longer needed
         # session.pop('survey_data', None)
