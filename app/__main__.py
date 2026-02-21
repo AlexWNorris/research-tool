@@ -4,10 +4,20 @@ import uuid
 import hashlib
 from datetime import datetime
 from flask import Flask, render_template, request, session, redirect, url_for, jsonify, make_response
+from dotenv import load_dotenv
+
+load_dotenv()
 
 
 app = Flask(__name__)
-app.config['SECRET_KEY'] = 'dev-secret-key'  # TODO: Change this in production
+
+_secret_key = os.environ.get('SECRET_KEY')
+if not _secret_key:
+    if os.environ.get('FLASK_ENV') == 'production':
+        raise RuntimeError('SECRET_KEY environment variable must be set in production.')
+    # Fall back to a clearly-labelled insecure default for local development only
+    _secret_key = 'dev-only-insecure-key-do-not-use-in-production'
+app.config['SECRET_KEY'] = _secret_key
 
 
 @app.route('/', methods=['GET', 'POST'])
