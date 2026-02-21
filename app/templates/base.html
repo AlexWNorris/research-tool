@@ -20,12 +20,12 @@
             <img src="{{ url_for('static', filename='img/university logo.png') }}" alt="University of Exeter"
                 class="university-logo">
             {% if current_step %}
-            <div class="progress-counter">
-                {% for i in range(1, total_steps + 1) %}
-                <div class="progress-circle {% if i == current_step %}active{% endif %}">
-                    {{ i }}
+            <div class="progress-bar-wrapper">
+                <div class="progress-bar-label">Your Progress</div>
+                <div class="progress-bar-track">
+                    <div class="progress-bar-fill" style="width: {{ ((current_step / total_steps) * 100) | round | int }}%;"></div>
                 </div>
-                {% endfor %}
+                <div class="progress-bar-text">Step {{ current_step }} of {{ total_steps }}</div>
             </div>
             {% endif %}
         </div>
