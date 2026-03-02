@@ -11,6 +11,7 @@ load_dotenv()
 
 app = Flask(__name__)
 
+
 _secret_key = os.environ.get('SECRET_KEY')
 if not _secret_key:
     if os.environ.get('FLASK_ENV') == 'production':
@@ -74,6 +75,7 @@ def fingerprint():
     if request.method == 'POST':
         # Get JSON data from the fetch request
         fingerprint_data = request.json
+        info_button_clicked = fingerprint_data.pop('infoButtonClicked', False) if fingerprint_data else False
 
         session_id = str(uuid.uuid4())
         
@@ -82,7 +84,8 @@ def fingerprint():
             'session_id': session_id,
             'timestamp': datetime.now().isoformat(),
             'survey_response': session.get('survey_data', {}),
-            'fingerprint': fingerprint_data
+            'fingerprint': fingerprint_data,
+            'info_button_clicked': info_button_clicked
         }
 
         # Save to local file
@@ -100,8 +103,6 @@ def fingerprint():
         except Exception as e:
             print(f"Error saving data locally: {e}")
 
-        # Optional: Clear session data if no longer needed
-        # session.pop('survey_data', None)
 
         resp = make_response(jsonify({'status': 'success'}))
         # Set cookie to expire in 1 year (365 days = 24 hours * 60 minutes * 60 seconds)

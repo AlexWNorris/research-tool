@@ -42,6 +42,8 @@ function scrollToBottom() {
 
 // 4. Initialize logic when the DOM is fully loaded
 document.addEventListener('DOMContentLoaded', () => {
+    let infoButtonClicked = false;
+
     // Get Attributes and populate table
     fpPromise
         .then(fp => fp.get({ extendedResult: true }))
@@ -68,7 +70,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 const data = {
                     visitorId: result.visitorId,
-                    components: attributesList
+                    components: attributesList,
+                    infoButtonClicked: infoButtonClicked
                 };
 
                 fetch('/fingerprint', {
@@ -118,6 +121,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     if (infoButton && infoModal && closeModal) {
         infoButton.addEventListener('click', () => {
+            infoButtonClicked = true;
             infoModal.style.display = 'flex';
         });
 
