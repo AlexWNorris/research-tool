@@ -5,6 +5,9 @@ import hashlib
 from datetime import datetime
 from flask import Flask, render_template, request, session, redirect, url_for, jsonify, make_response
 from dotenv import load_dotenv
+# my python files
+from emailer import send_email
+from encryptor import encrypt_json
 
 app = Flask(__name__)
 
@@ -86,20 +89,25 @@ def fingerprint():
         }
 
         # Save to local file (code used during testing)
-        filename = f"data_{session_id}.json"
-        data_dir = os.path.join(app.root_path, 'data')
+        # filename = f"data_{session_id}.json"
+        # data_dir = os.path.join(app.root_path, 'data')
         
-        try:
-            os.makedirs(data_dir, exist_ok=True)
-            filepath = os.path.join(data_dir, filename)
+        # try:
+        #     os.makedirs(data_dir, exist_ok=True)
+        #     filepath = os.path.join(data_dir, filename)
             
-            with open(filepath, 'w') as f:
-                json.dump(full_data, f, indent=4)
+        #     with open(filepath, 'w') as f:
+        #         json.dump(full_data, f, indent=4)
                 
-            print(f"Successfully saved {filename} locally")
-        except Exception as e:
-            print(f"Error saving data locally: {e}")
+        #     print(f"Successfully saved {filename} locally")
+        # except Exception as e:
+        #     print(f"Error saving data locally: {e}")
 
+        # Encrypt json information ready for email transfer
+        email_payload = encrypt_json(full_data) 
+
+        # Send information to shair (via power automate email trigger)
+        send_email(email_payload)
 
         resp = make_response(jsonify({'status': 'success'}))
         # Set cookie to expire in 1 year (365 days = 24 hours * 60 minutes * 60 seconds)
