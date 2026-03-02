@@ -17,5 +17,5 @@ def decrypt_to_json(data):
 
     return formated_data
 
-def return_shar_hash(data):
+def return_normalised_shar_hash(data):
     return hashlib.sha256(data.lower().strip().encode('utf-8')).hexdigest()
