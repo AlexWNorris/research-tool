@@ -85,7 +85,7 @@ def fingerprint():
             'info_button_clicked': info_button_clicked
         }
 
-        # Save to local file
+        # Save to local file (code used during testing)
         filename = f"data_{session_id}.json"
         data_dir = os.path.join(app.root_path, 'data')
         
