@@ -17,7 +17,7 @@ def get_encrypted_string_from_stored_data_file(file):
     return encrypted_string
 
 def save_to_folder(dir_path,filename,content):
-    with open(dir_path+"/"+filename+".txt","w") as fl:
+    with open(dir_path+"/"+filename,"w") as fl:
         fl.write(content)
 
 def populate_decrypted_folder(target_dir):
@@ -29,3 +29,13 @@ def populate_decrypted_folder(target_dir):
         json_string = json.dumps(json_dict)
 
         save_to_folder("data/decrypted",file,json_string)
+
+def get_file_names_and_content_for_all_files_in_folder(target_dir):
+    output = {}
+    files = os.listdir(target_dir)
+    for file in files:
+        path = target_dir+"/"+file
+        with open(path,"r") as fl:
+            content = fl.read()
+        output[file] = content
+    return output
