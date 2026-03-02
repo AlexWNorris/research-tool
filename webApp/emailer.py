@@ -14,7 +14,7 @@ def send_email(body):
     app_password = os.environ.get("GMAIL_APP_PASSCODE")
     receiver_email = "an631@exeter.ac.uk"
 
-    # Remove rogue SSLKEYLOGFILE environment variable if it exists
+    # Remove rogue SSLKEYLOGFILE environment variable if it exists, as this causes the system to fail \_o_/
     if "SSLKEYLOGFILE" in os.environ:
         del os.environ["SSLKEYLOGFILE"]
 
