@@ -16,14 +16,3 @@ def encrypt_json(data):
 
     return encrypted_string
 
-def decrypt_to_json(data):
-    """
-    take encrypted string and return original json string
-    """
-    encrypted_bytes = data.encode('utf-8')
-    json_bytes = cipher_suite.decrypt(encrypted_bytes)
-    json_string = json_bytes.decode('utf-8')
-    formated_data = json.loads(json_string)
-
-    return formated_data
-
