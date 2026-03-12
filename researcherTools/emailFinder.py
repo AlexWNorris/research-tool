@@ -3,8 +3,8 @@ import cryptographyTools
 import os
 import json
 
-def find_instances_of_email(target_email):
-    files = fileHandler.get_file_names_and_content_for_all_files_in_folder("data/decrypted")
+def find_instances_of_email(target_email,data_dir):
+    files = fileHandler.get_file_names_and_content_for_all_files_in_folder(data_dir)
     hits=[]
     for file_name in files:
         json_dict = json.loads(files[file_name])
