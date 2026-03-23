@@ -256,9 +256,4 @@ class PilotDataHandler:
             
         self.plot_demographic_heatmap(save_path=os.path.join(output_dir, 'demographics_heatmap.png'))
 
-if __name__ == "__main__":
-    handler = PilotDataHandler()
-    print("Overall uniqueness:", handler.get_overall_uniqueness())
-    
-    # Generate all plots
-    handler.plot_all_demographics()
+
