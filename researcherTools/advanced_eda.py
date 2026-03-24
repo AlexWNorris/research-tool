@@ -82,8 +82,8 @@ def task_1_entropy(df):
     plt.figure(figsize=(12, 10))
     sns.barplot(x='Entropy', y='Feature', data=ent_df, hue='Feature', palette="viridis", legend=False)
     plt.title("Feature Information Value (Shannon Entropy)", fontsize=18, pad=20)
-    plt.xlabel("Entropy (bits)")
-    plt.ylabel("Fingerprint Feature")
+    plt.xlabel("Entropy (bits)",fontsize=16)
+    plt.yticks(fontsize=16)
     plt.tight_layout()
     output_path = os.path.join(OUTPUT_DIR, "task1_feature_entropy.png")
     plt.savefig(output_path, dpi=300)
@@ -225,7 +225,11 @@ def task_5_demographics(df):
         title="Demographic Overview: Parallel Categories (Alluvial Diagram)",
         labels={'Age': 'Age Group', 'Gender': 'Gender', 'Income': 'Income Bracket', 'Education': 'Education Level'}
     )
-    fig_parallel.update_layout(margin=dict(l=60, r=60, t=60, b=40))
+    fig_parallel.update_layout(
+        margin=dict(l=60, r=60, t=60, b=40),
+        font=dict(size=26),
+        title_font=dict(size=24)
+    )
     parallel_path = os.path.join(OUTPUT_DIR, "task5_demographics_parallel.html")
     fig_parallel.write_html(parallel_path)
     print(f"Saved Parallel Categories Diagram to: {parallel_path}")
@@ -239,7 +243,15 @@ def task_5_demographics(df):
         color='Count',
         color_continuous_scale='Blues'
     )
-    fig_sunburst.update_layout(margin=dict(l=20, r=20, t=60, b=20))
+    fig_sunburst.update_layout(
+        margin=dict(l=20, r=20, t=60, b=20),
+        font=dict(size=36), 
+        title_font=dict(size=36)
+    )
+    fig_sunburst.update_traces(
+        insidetextorientation='auto' 
+    )
+    
     sunburst_path = os.path.join(OUTPUT_DIR, "task5_demographics_sunburst.html")
     fig_sunburst.write_html(sunburst_path)
     print(f"Saved Sunburst Chart to: {sunburst_path}")
@@ -256,8 +268,8 @@ def task_6_uniqueness_accumulation(df):
         counts = df[col].value_counts(normalize=True).values
         entropies[col] = entropy(counts, base=2)
     
-    # Sort features by entropy ascending
-    sorted_features = sorted(entropies.keys(), key=lambda k: entropies[k])
+    # Sort features by entropy descending
+    sorted_features = sorted(entropies.keys(), key=lambda k: entropies[k], reverse=True)
     
     percentages = []
     user_unique_at_k = {i: None for i in range(len(df))}
@@ -288,15 +300,10 @@ def task_6_uniqueness_accumulation(df):
     plt.figure(figsize=(10, 6))
     plt.plot(range(1, len(sorted_features) + 1), percentages, marker='o', linestyle='-', color='#8E44AD', linewidth=2, markersize=6)
     plt.title("Uniquely Identified Users vs. Features Added", fontsize=16, pad=20)
-    plt.xlabel("Number of Features Included (Ascending by Entropy)", fontsize=14)
+    plt.xlabel("Number of Features Included (Descending by Entropy)", fontsize=14)
     plt.ylabel("Uniquely Identified Users (%)", fontsize=14)
     plt.grid(True, linestyle='--', alpha=0.7)
     
-    if required_features:
-        plt.annotate(f"Avg Features Required:\n{avg_features:.2f}",
-                     xy=(0.05, 0.85), xycoords='axes fraction',
-                     bbox=dict(boxstyle="round,pad=0.5", fc="white", ec="#8E44AD", lw=2),
-                     fontsize=12, color="black")
                      
     plt.tight_layout()
     output_path = os.path.join(OUTPUT_DIR, "task6_cumulative_uniqueness.png")
