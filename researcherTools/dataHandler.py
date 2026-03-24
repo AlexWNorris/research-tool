@@ -351,6 +351,55 @@ class PilotDataHandler:
             
         plt.close()
 
+    def plot_risk_subplots(self, save_path=None):
+        """Plots a 2x2 multi-axis subplot matrix containing demographic risk charts."""
+        demographics = ['gender', 'income', 'age', 'education']
+        
+        fig, axes = plt.subplots(2, 2, figsize=(15, 12))
+        axes = axes.flatten()
+        
+        for i, demo_key in enumerate(demographics):
+            ax = axes[i]
+            stats = self.get_demographic_risk(demo_key)
+            if not stats:
+                ax.set_title(f"No risk data for {demo_key}")
+                continue
+                
+            sorted_stats = dict(sorted(stats.items(), key=lambda item: item[1]['average_risk'], reverse=True))
+            groups = list(sorted_stats.keys())
+            risks = [s['average_risk'] for s in sorted_stats.values()]
+            ns = [s['total_count'] for s in sorted_stats.values()]
+            
+            x_pos = np.arange(len(groups))
+            bars = ax.bar(x_pos, risks, color='#00c896', edgecolor='black')
+            
+            for bar, risk, n in zip(bars, risks, ns):
+                height = bar.get_height()
+                ax.annotate(f'{risk:.1f}\n(n={n})',
+                            xy=(bar.get_x() + bar.get_width() / 2, height),
+                            xytext=(0, 3), 
+                            textcoords="offset points",
+                            ha='center', va='bottom', fontsize=10)
+                            
+            ax.set_ylabel('Avg Information (Bits)', fontsize=11)
+            ax.set_title(f'Risk by {demo_key.capitalize()}', fontsize=14, pad=15)
+            ax.set_xticks(x_pos)
+            
+            formatted_groups = [g if len(g) < 20 else g[:17] + '...' for g in groups]
+            ax.set_xticklabels(formatted_groups, rotation=45 if len(groups) > 2 else 0, ha='right' if len(groups) > 2 else 'center')
+            ax.set_ylim(0, max(risks) + max(risks)*0.15 if risks else 100)
+
+        plt.suptitle("Average Fingerprint Risk Across Demographics", fontsize=18, y=0.96)
+        plt.tight_layout(rect=[0, 0, 1, 0.94])
+
+        if save_path:
+            plt.savefig(save_path, bbox_inches='tight')
+            print(f"Saved combined risk subplots to {save_path}")
+        else:
+            plt.show()
+            
+        plt.close()
+
     def plot_all_demographics(self, output_dir="plots"):
         """Generates plots for overall uniqueness and all key demographics."""
         if not os.path.exists(output_dir):
@@ -364,5 +413,6 @@ class PilotDataHandler:
             self.plot_demographic_risk(key, save_path=os.path.join(output_dir, f'{key}_risk.png'))
             
         self.plot_demographic_heatmap(save_path=os.path.join(output_dir, 'demographics_heatmap.png'))
+        self.plot_risk_subplots(save_path=os.path.join(output_dir, 'combined_risk_subplots.png'))
 
 
