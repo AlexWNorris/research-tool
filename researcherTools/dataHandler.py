@@ -136,12 +136,10 @@ class PilotDataHandler:
 
         labels = ['Unique', 'Duplicates']
         sizes = [unique_count, duplicates]
-        colors = ['#4CAF50', '#FFC107']
-        explode = (0.1, 0)
+        colors = ['#DE591C', '#00c896']
 
         fig, ax = plt.subplots(figsize=(8, 6))
-        ax.pie(sizes, explode=explode, labels=labels, colors=colors, autopct='%1.1f%%',
-               shadow=True, startangle=140)
+        ax.pie(sizes, labels=labels, colors=colors, autopct='%1.1f%%', startangle=140)
         ax.axis('equal')
         
         plt.title(f"Overall Fingerprint Uniqueness (n={stats['total_count']})", fontsize=14, pad=20)
@@ -252,7 +250,7 @@ class PilotDataHandler:
         fig, ax = plt.subplots(figsize=(10, 6))
         
         x_pos = np.arange(len(groups))
-        bars = ax.bar(x_pos, risks, color='#E91E63', edgecolor='black')
+        bars = ax.bar(x_pos, risks, color='#00c896', edgecolor='black')
 
         for bar, risk, n in zip(bars, risks, ns):
             height = bar.get_height()
