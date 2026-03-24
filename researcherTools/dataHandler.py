@@ -40,6 +40,36 @@ class PilotDataHandler:
                 print(f"Error reading {filename}: {e}")
         
         print(f"Loaded {len(self.records)} valid records.")
+        self._calculate_risks()
+
+    def _calculate_risks(self):
+        """Calculates the risk value (bits of info) for each user based on fingerprint features."""
+        if not self.records:
+            return
+            
+        # Step 1: Collect features across all records
+        feature_counts = {}
+        total_records = len(self.records)
+        
+        for r in self.records:
+            components = r['fingerprint'].get('components', {})
+            for comp_name, comp_data in components.items():
+                val = str(comp_data.get('value', 'missing'))
+                if comp_name not in feature_counts:
+                    feature_counts[comp_name] = {}
+                feature_counts[comp_name][val] = feature_counts[comp_name].get(val, 0) + 1
+        
+        # Step 2: Calculate bits of information (risk) for each user
+        for r in self.records:
+            risk_value = 0.0
+            components = r['fingerprint'].get('components', {})
+            for comp_name, comp_data in components.items():
+                val = str(comp_data.get('value', 'missing'))
+                count = feature_counts[comp_name].get(val, 1)
+                prob = count / total_records
+                if prob > 0:
+                    risk_value -= np.log2(prob)
+            r['risk_value'] = risk_value
 
     def get_overall_uniqueness(self):
         """
@@ -173,6 +203,86 @@ class PilotDataHandler:
             
         plt.close()
 
+    def get_demographic_risk(self, demographic_key):
+        """
+        Calculates the average risk value (bits of info) for a specific demographic.
+        Args:
+            demographic_key (str): e.g., 'age', 'education', 'gender', 'income'
+        Returns:
+            dict: { 'group_name': {'average_risk': float, 'total_count': int} }
+        """
+        if not self.records or 'risk_value' not in self.records[0]:
+            self._calculate_risks()
+            
+        groups = {}
+        for r in self.records:
+            sv = r.get('survey_response', {})
+            val = sv.get(demographic_key, "Unknown")
+            if val is None:
+                val = "Unknown"
+            
+            if val not in groups:
+                groups[val] = []
+            
+            groups[val].append(r.get('risk_value', 0.0))
+
+        results = {}
+        for group_name, risks in groups.items():
+            results[group_name] = {
+                'average_risk': np.mean(risks) if risks else 0.0,
+                'total_count': len(risks)
+            }
+        
+        return results
+
+    def plot_demographic_risk(self, demographic_key, save_path=None):
+        """Plots a bar chart of average risk (bits) by demographic group."""
+        stats = self.get_demographic_risk(demographic_key)
+        if not stats:
+            print(f"No data to plot for demographic risk: {demographic_key}")
+            return
+
+        # Sort by average risk descending
+        sorted_stats = dict(sorted(stats.items(), key=lambda item: item[1]['average_risk'], reverse=True))
+
+        groups = list(sorted_stats.keys())
+        risks = [s['average_risk'] for s in sorted_stats.values()]
+        ns = [s['total_count'] for s in sorted_stats.values()]
+
+        fig, ax = plt.subplots(figsize=(10, 6))
+        
+        x_pos = np.arange(len(groups))
+        bars = ax.bar(x_pos, risks, color='#E91E63', edgecolor='black')
+
+        for bar, risk, n in zip(bars, risks, ns):
+            height = bar.get_height()
+            ax.annotate(f'{risk:.1f} bits\n(n={n})',
+                        xy=(bar.get_x() + bar.get_width() / 2, height),
+                        xytext=(0, 3),  # 3 points vertical offset
+                        textcoords="offset points",
+                        ha='center', va='bottom', fontsize=10)
+
+        ax.set_ylabel('Average Identifying Information (Bits)', fontsize=12)
+        ax.set_title(f'Average Fingerprint Risk by {demographic_key.capitalize()} Demographic', fontsize=14, pad=25)
+        ax.set_xticks(x_pos)
+        
+        # Format labels - split long labels if needed
+        formatted_groups = [g if len(g) < 20 else g[:17] + '...' for g in groups]
+        ax.set_xticklabels(formatted_groups, rotation=45, ha='right')
+
+        # Limit y-axis to a slightly higher top for annotations to fit
+        ax.set_ylim(0, max(risks) + max(risks)*0.15 if risks else 100)
+
+        plt.tight_layout()
+
+        if save_path:
+            plt.savefig(save_path, bbox_inches='tight')
+            print(f"Saved {demographic_key} risk plot to {save_path}")
+        else:
+            plt.show()
+            
+        plt.close()
+
     def plot_demographic_heatmap(self, save_path=None):
         """Plots a multi-index heatmap for age, gender, income, and education."""
         data = []
@@ -253,6 +363,7 @@ class PilotDataHandler:
         demographic_keys = ['age', 'education', 'gender', 'income']
         for key in demographic_keys:
             self.plot_demographic_uniqueness(key, save_path=os.path.join(output_dir, f'{key}_uniqueness.png'))
+            self.plot_demographic_risk(key, save_path=os.path.join(output_dir, f'{key}_risk.png'))
             
         self.plot_demographic_heatmap(save_path=os.path.join(output_dir, 'demographics_heatmap.png'))
 
