@@ -10,7 +10,7 @@ import advanced_eda
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 DATA_DIR = os.path.abspath(os.path.join(BASE_DIR, "..", "fullData", "decrypted"))
-OUTPUT_DIR = os.path.abspath(os.path.join(BASE_DIR, "..", "plots", "poster_analysis"))
+OUTPUT_DIR = os.path.abspath(os.path.join(BASE_DIR, "..", "plots", "aglomorated_analysis"))
 
 if not os.path.exists(OUTPUT_DIR):
     os.makedirs(OUTPUT_DIR)
@@ -38,7 +38,7 @@ def map_gender(gender):
     if gender in ['Male', 'Female']: return gender
     return 'Ignore'
 
-def run_poster_analysis():
+def run_aglomorated_analysis():
     print("====================================")
     print("Full ANALYSIS SCRIPT initialized")
     print("====================================")
@@ -97,7 +97,7 @@ def run_poster_analysis():
         advanced_eda.task_4_waffle(df)
         advanced_eda.task_5_demographics(df)
         advanced_eda.task_6_uniqueness_accumulation(df)
-        print("\n*** ALL POSTER EDA TASKS COMPLETED SUCCESSFULLY ***")
+        print("\n*** ALL AGLOMORATED EDA TASKS COMPLETED SUCCESSFULLY ***")
     else:
         print("No records left after filtering. Terminating Advance EDA.")
 
@@ -157,4 +157,4 @@ def run_poster_analysis():
         print(f"\nSaved statistical test results table to: {csv_path}")
 
 if __name__ == "__main__":
-    run_poster_analysis()
+    run_aglomorated_analysis()
