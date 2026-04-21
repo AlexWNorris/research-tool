@@ -96,12 +96,15 @@ def task_1_entropy(df):
 def task_2_network(df):
     print("\n--- Running Task 2: Duplicates Network Graph ---")
     G = nx.Graph()
+    feature_cols = [c for c in df.columns if c.startswith('feat_')]
     for idx, row in df.iterrows():
         node_id = row['session_id']
         gender = row['demo_gender'] if pd.notna(row.get('demo_gender')) else 'Unknown'
-        G.add_node(node_id, gender=gender, visitorId=row['visitorId'])
+        G.add_node(node_id, gender=gender)
+        
+    df_features = df[feature_cols]
     for u, v in combinations(df.iterrows(), 2):
-        if u[1]['visitorId'] == v[1]['visitorId']:
+        if tuple(df_features.loc[u[0]]) == tuple(df_features.loc[v[0]]):
             G.add_edge(u[1]['session_id'], v[1]['session_id'])
     
     isolated = list(nx.isolates(G))
@@ -146,8 +149,10 @@ def task_3_sankey(df):
     avg_sim = np.mean(similarities) if similarities else 0
     print(f"Average pairwise Jaccard similarity across dataset: {avg_sim:.4f}")
     
-    dup_vids = set(df[df.duplicated('visitorId', keep=False)]['visitorId'])
-    df['Uniqueness'] = df['visitorId'].apply(lambda x: "Duplicate" if x in dup_vids else "Unique")
+    feature_cols = [c for c in df.columns if c.startswith('feat_')]
+    is_duplicate = df.duplicated(subset=feature_cols, keep=False)
+    df['Uniqueness'] = is_duplicate.map({True: "Duplicate", False: "Unique"})
+    
     df['Income'] = df.get('demo_income', pd.Series(['Unknown']*len(df))).fillna('Unknown')
     df['Education'] = df.get('demo_education', pd.Series(['Unknown']*len(df))).fillna('Unknown')
     
@@ -188,8 +193,9 @@ def task_4_waffle(df):
         print("Skipped because pywaffle is not installed.")
         return
         
-    dup_vids = set(df[df.duplicated('visitorId', keep=False)]['visitorId'])
-    df['Uniqueness'] = df['visitorId'].apply(lambda x: "Duplicate" if x in dup_vids else "Unique")
+    feature_cols = [c for c in df.columns if c.startswith('feat_')]
+    is_duplicate = df.duplicated(subset=feature_cols, keep=False)
+    df['Uniqueness'] = is_duplicate.map({True: "Duplicate", False: "Unique"})
     
     counts = df['Uniqueness'].value_counts()
     unique_count = counts.get('Unique', 0)
@@ -277,17 +283,23 @@ def task_6_uniqueness_accumulation(df):
     
     for k in range(1, len(sorted_features) + 1):
         selected_features = sorted_features[:k]
-        
-        # Sub-fingerprint creation
         subset_df = df[selected_features].astype(str)
         is_unique_subset = ~subset_df.duplicated(keep=False)
-        
-        num_unique = is_unique_subset.sum()
-        percentages.append((num_unique / total_users) * 100)
+        percentages.append((is_unique_subset.sum() / total_users) * 100)
         
         for i, is_uniq in is_unique_subset.items():
             if is_uniq and user_unique_at_k[i] is None:
                 user_unique_at_k[i] = k
+
+    # Calculate same logic but for features excluding the top 10
+    excluded_features = sorted_features[10:]
+    percentages_excluded = []
+    
+    for k in range(1, len(excluded_features) + 1):
+        selected_features = excluded_features[:k]
+        subset_df = df[selected_features].astype(str)
+        is_unique_subset = ~subset_df.duplicated(keep=False)
+        percentages_excluded.append((is_unique_subset.sum() / total_users) * 100)
                 
     # Calculate average features required for users who become uniquely identified
     required_features = [k for k in user_unique_at_k.values() if k is not None]
@@ -298,18 +310,111 @@ def task_6_uniqueness_accumulation(df):
         print("No users could be uniquely identified.")
         
     plt.figure(figsize=(10, 6))
-    plt.plot(range(1, len(sorted_features) + 1), percentages, marker='o', linestyle='-', color='#8E44AD', linewidth=2, markersize=6)
+    
+    # Plot line 1 (All features)
+    plt.plot(range(1, len(sorted_features) + 1), percentages, marker='o', linestyle='-', color='#8E44AD', linewidth=2, markersize=6, label='All Features')
+    
+    # Plot line 2 (Excluding top 10)
+    plt.plot(range(1, len(excluded_features) + 1), percentages_excluded, marker='s', linestyle='--', color='#E74C3C', linewidth=2, markersize=6, label='Excluding Top 10 Entropy Features')
+    
     plt.title("Uniquely Identified Users vs. Features Added", fontsize=16, pad=20)
     plt.xlabel("Number of Features Included (Descending by Entropy)", fontsize=14)
     plt.ylabel("Uniquely Identified Users (%)", fontsize=14)
     plt.grid(True, linestyle='--', alpha=0.7)
+    plt.legend(fontsize=12)
     
-                     
     plt.tight_layout()
     output_path = os.path.join(OUTPUT_DIR, "task6_cumulative_uniqueness.png")
     plt.savefig(output_path, dpi=300)
     plt.close()
     print(f"Saved Cumulative Uniqueness Graph to: {output_path}")
+
+# ==========================================
+# Task 7: Demographic Boundary Entropy Shift Analysis
+# ==========================================
+def task_7_boundary_entropy(df):
+    print("\n--- Running Task 7: Demographic Boundary Entropy Shift Analysis ---")
+    
+    boundaries = {
+        'Age': ['<=34', '>=35'],
+        'Income': ['<= 54,999', '>= 55,000'],
+        'Education': ['Pre-University', 'University Level and Above'],
+        'Gender': ['Female', 'Male']
+    }
+    
+    feature_cols = [c for c in df.columns if c.startswith('feat_')]
+    summary_results = []
+    all_results = []
+    
+    for demo_name, groups in boundaries.items():
+        col_name = f"demo_{demo_name.lower()}"
+        if col_name not in df.columns:
+            continue
+            
+        for i in range(len(groups) - 1):
+            g1, g2 = groups[i], groups[i+1]
+            
+            df_g1 = df[df[col_name] == g1]
+            df_g2 = df[df[col_name] == g2]
+            
+            if len(df_g1) == 0 or len(df_g2) == 0:
+                continue
+                
+            boundary_max_diff = -1
+            boundary_max_feat = None
+            boundary_g1_ent = 0
+            boundary_g2_ent = 0
+            
+            for feat in feature_cols:
+                # Calculate entropy for group 1
+                counts1 = df_g1[feat].value_counts(normalize=True).values
+                ent1 = entropy(counts1, base=2)
+                
+                # Calculate entropy for group 2
+                counts2 = df_g2[feat].value_counts(normalize=True).values
+                ent2 = entropy(counts2, base=2)
+                
+                diff = abs(ent1 - ent2)
+                clean_feat = feat.replace('feat_', '')
+                
+                all_results.append({
+                    "Demographic": demo_name,
+                    "Boundary": f"{g1} -> {g2}",
+                    "Attribute": clean_feat,
+                    "Group 1 Entropy": round(ent1, 4),
+                    "Group 2 Entropy": round(ent2, 4),
+                    "Absolute Diff": round(diff, 4)
+                })
+                
+                if diff > boundary_max_diff:
+                    boundary_max_diff = diff
+                    boundary_max_feat = clean_feat
+                    boundary_g1_ent = ent1
+                    boundary_g2_ent = ent2
+            
+            if boundary_max_feat is not None:
+                summary_results.append({
+                    "Demographic": demo_name,
+                    "Boundary": f"{g1} -> {g2}",
+                    "Top Attribute": boundary_max_feat,
+                    "Group 1 Entropy": round(boundary_g1_ent, 4),
+                    "Group 2 Entropy": round(boundary_g2_ent, 4),
+                    "Absolute Diff": round(boundary_max_diff, 4)
+                })
+
+    if summary_results:
+        sum_df = pd.DataFrame(summary_results)
+        print("\nTop Browser Attribute Shifts Across Demographic Boundaries:")
+        print("=" * 110)
+        print(sum_df.to_string(index=False, justify="center"))
+        print("=" * 110)
+        
+        all_df = pd.DataFrame(all_results)
+        csv_path = os.path.join(OUTPUT_DIR, "task7_boundary_shifts.csv")
+        all_df.to_csv(csv_path, index=False)
+        print(f"Saved comprehensive boundary shifts analysis to: {csv_path}")
+    else:
+        print("No valid boundaries found or not enough data to compare adjacent boundaries.")
 
 # ==========================================
 # Main Execution Trigger
@@ -326,6 +431,7 @@ if __name__ == "__main__":
             task_4_waffle(df_records)
             task_5_demographics(df_records)
             task_6_uniqueness_accumulation(df_records)
+            task_7_boundary_entropy(df_records)
             print("\n*** ALL EDA TASKS COMPLETED SUCCESSFULLY ***")
         else:
             print("No records loaded. Terminating script.")
