@@ -18,25 +18,58 @@ if not os.path.exists(OUTPUT_DIR):
 # --- Mapping Functions ---
 def map_age(age):
     if pd.isna(age) or age == 'Unknown': return 'Unknown'
-    if age == '18-24': return '<=24'
-    return '>24'
+    if age in ['18-24', '25-34']: return '<=34'
+    return '>=35'
 
 def map_income(income):
     if pd.isna(income) or income == 'Unknown': return 'Unknown'
+    if income == 'Prefer not to say': return 'Prefer not to say'
     low = ['Less than £15,000', '15,000 - £24,999', '£15,000 - £24,999', '£25,000 - £34,999', '£35,000 - £44,999', '£45,000 - £54,999']
-    if income in low: return '<=£55,000'
-    return '>£55,000'
+    if income in low: return '<= 54,999'
+    return '>= 55,000'
 
 def map_education(education):
     if pd.isna(education) or education == 'Unknown': return 'Unknown'
     uni = ["Bachelor's Degree", "Postgraduate Degree", "Higher Education"]
-    if education in uni: return 'University level and above'
-    return 'Pre-university qualifications'
+    if education in uni: return 'University Level and Above'
+    return 'Pre-University'
 
 def map_gender(gender):
     if pd.isna(gender) or gender == 'Unknown': return 'Unknown'
     if gender in ['Male', 'Female']: return gender
-    return 'Ignore'
+    return gender
+
+def plot_boundary_entropy_shifts(output_dir):
+    import seaborn as sns
+    import matplotlib.pyplot as plt
+    
+    csv_path = os.path.join(output_dir, "task7_boundary_shifts.csv")
+    if not os.path.exists(csv_path):
+        print("Boundary shifts CSV not found. Cannot plot entropy shifts.")
+        return
+        
+    df = pd.read_csv(csv_path)
+    demographics = ['Age', 'Income', 'Education', 'Gender']
+    
+    for demo in demographics:
+        demo_df = df[df['Demographic'] == demo].sort_values('Absolute Diff', ascending=False)
+        
+        if len(demo_df) == 0:
+            continue
+            
+        plt.figure(figsize=(12, 10))
+        sns.barplot(x='Absolute Diff', y='Attribute', data=demo_df, palette='viridis', hue='Attribute', legend=False)
+        plt.title(f"Entropy Change across {demo} Boundary", fontsize=18, fontweight='bold', pad=20)
+        plt.xlabel("Absolute Entropy Difference (Bits)", fontsize=16)
+        plt.ylabel("")
+        plt.xticks(fontsize=12)
+        plt.yticks(fontsize=12)
+        plt.tight_layout()
+        
+        plot_path = os.path.join(output_dir, f"task7_boundary_entropy_{demo}.png")
+        plt.savefig(plot_path, dpi=300)
+        plt.close()
+        print(f"Saved {demo} boundary entropy shift plot to: {plot_path}")
 
 def run_aglomorated_analysis():
     print("====================================")
@@ -51,13 +84,13 @@ def run_aglomorated_analysis():
     filtered_records = []
     for r in handler.records:
         sv = r.get('survey_response', {})
+        
         gender = map_gender(sv.get('gender', 'Unknown'))
-        if gender == 'Ignore':
-            continue
+        income = map_income(sv.get('income', 'Unknown'))
         
         sv['gender'] = gender
         sv['age'] = map_age(sv.get('age', 'Unknown'))
-        sv['income'] = map_income(sv.get('income', 'Unknown'))
+        sv['income'] = income
         sv['education'] = map_education(sv.get('education', 'Unknown'))
         
         r['survey_response'] = sv
@@ -81,14 +114,10 @@ def run_aglomorated_analysis():
     
     df = advanced_eda.load_data(DATA_DIR)
     
-    # Safely map demographics back to the dataframe (advanced_eda expects demo_ columns)
     df['demo_age'] = df.get('demo_age', pd.Series(['Unknown']*len(df))).apply(map_age)
     df['demo_income'] = df.get('demo_income', pd.Series(['Unknown']*len(df))).apply(map_income)
     df['demo_education'] = df.get('demo_education', pd.Series(['Unknown']*len(df))).apply(map_education)
     df['demo_gender'] = df.get('demo_gender', pd.Series(['Unknown']*len(df))).apply(map_gender)
-    
-    # Drop rows where 'Ignore' was set for gender
-    df = df[df['demo_gender'] != 'Ignore'].reset_index(drop=True)
     
     if len(df) > 0:
         advanced_eda.task_1_entropy(df)
@@ -97,7 +126,12 @@ def run_aglomorated_analysis():
         advanced_eda.task_4_waffle(df)
         advanced_eda.task_5_demographics(df)
         advanced_eda.task_6_uniqueness_accumulation(df)
+        advanced_eda.task_7_boundary_entropy(df)
         print("\n*** ALL AGLOMORATED EDA TASKS COMPLETED SUCCESSFULLY ***")
+        
+        # Generate the requested 4 diagram figure for entropy changes
+        plot_boundary_entropy_shifts(OUTPUT_DIR)
+        
     else:
         print("No records left after filtering. Terminating Advance EDA.")
 
@@ -108,9 +142,9 @@ def run_aglomorated_analysis():
     
     demographics_to_test = {
         'Gender': ('Female', 'Male'),
-        'Age': ('<=24', '>24'),
-        'Income': ('<=£55,000', '>£55,000'),
-        'Education': ('University level and above', 'Pre-university qualifications')
+        'Age': ('<=34', '>=35'),
+        'Income': ('<= 54,999', '>= 55,000'),
+        'Education': ('University Level and Above', 'Pre-University')
     }
     
     results_data = []

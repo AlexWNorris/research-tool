@@ -71,6 +71,11 @@ class PilotDataHandler:
                     risk_value -= np.log2(prob)
             r['risk_value'] = risk_value
 
+    def _get_fingerprint_hash(self, r):
+        components = r['fingerprint'].get('components', {})
+        sorted_feats = sorted(components.items())
+        return str(tuple((k, str(v.get('value', 'missing'))) for k, v in sorted_feats))
+
     def get_overall_uniqueness(self):
         """
         Calculates the proportion of unique fingerprints in the whole dataset.
@@ -81,8 +86,11 @@ class PilotDataHandler:
         if total_count == 0:
             return {'unique_count': 0, 'total_count': 0, 'ratio': 0.0}
 
-        unique_fingerprints = set(r['fingerprint']['visitorId'] for r in self.records)
-        unique_count = len(unique_fingerprints)
+        hashes = [self._get_fingerprint_hash(r) for r in self.records]
+        from collections import Counter
+        hash_counts = Counter(hashes)
+        
+        unique_count = sum(1 for h in hashes if hash_counts[h] == 1)
         ratio = unique_count / total_count
 
         return {
@@ -100,6 +108,10 @@ class PilotDataHandler:
             dict: { 'group_name': {'unique_count': int, 'total_count': int, 'ratio': float} }
         """
         groups = {}
+        all_hashes = [self._get_fingerprint_hash(r) for r in self.records]
+        from collections import Counter
+        global_hash_counts = Counter(all_hashes)
+
         for r in self.records:
             sv = r.get('survey_response', {})
             val = sv.get(demographic_key)
@@ -109,12 +121,12 @@ class PilotDataHandler:
             if val not in groups:
                 groups[val] = []
             
-            groups[val].append(r['fingerprint']['visitorId'])
+            groups[val].append(self._get_fingerprint_hash(r))
 
         results = {}
-        for group_name, v_ids in groups.items():
-            total_count = len(v_ids)
-            unique_count = len(set(v_ids))
+        for group_name, h_ids in groups.items():
+            total_count = len(h_ids)
+            unique_count = sum(1 for h in h_ids if global_hash_counts[h] == 1)
             ratio = unique_count / total_count if total_count > 0 else 0.0
             results[group_name] = {
                 'unique_count': unique_count,
@@ -134,16 +146,16 @@ class PilotDataHandler:
         unique_count = stats['unique_count']
         duplicates = stats['total_count'] - unique_count
 
-        labels = ['Unique', 'Duplicates']
+        labels = ['Unique', 'Not Unique']
         sizes = [unique_count, duplicates]
         colors = ['#DE591C', '#00c896']
 
         fig, ax = plt.subplots(figsize=(8, 6))
-        ax.pie(sizes, labels=labels, colors=colors, autopct='%1.1f%%', startangle=140)
+        ax.pie(sizes, labels=labels, colors=colors, autopct='%1.1f%%', startangle=140, textprops={'fontsize':14})
         ax.axis('equal')
         
         plt.title(f"Overall Fingerprint Uniqueness (n={stats['total_count']})", fontsize=14, pad=20)
-        
+
         if save_path:
             plt.savefig(save_path, bbox_inches='tight')
             print(f"Saved overall uniqueness plot to {save_path}")
@@ -329,17 +341,21 @@ class PilotDataHandler:
         fig, ax = plt.subplots(figsize=(16, 12))
         
         sns.heatmap(
-            pivot_ratio, 
+            pivot_count, 
             annot=pivot_count, 
             fmt=".0f", 
             cmap="YlGnBu", 
             ax=ax,
-            cbar_kws={'label': 'Proportion of Unique Fingerprints'},
+            cbar=False,
             linewidths=.5,
-            mask=pivot_count == 0
+            mask=pivot_count == 0,
+            annot_kws={"size": 24}
         )
         
-        ax.set_title("Fingerprint Uniqueness by Demographics\n(Color: Uniqueness Proportion, Number: Data Points)", fontsize=16, pad=20)
+        ax.set_title("Fingerprint Data Points by Demographics", fontsize=20, pad=20)
+        ax.xaxis.label.set_size(18)
+        ax.yaxis.label.set_size(18)
+        ax.tick_params(axis='both', which='major', labelsize=16)
         
         plt.tight_layout()
         
