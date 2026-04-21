@@ -87,6 +87,13 @@ def main():
         try:
             handler = PilotDataHandler(data_dir=input_dir)
             handler.plot_all_demographics(output_dir=output_dir)
+            
+            # Run the newly integrated boundary shift analysis
+            import advanced_eda
+            advanced_eda.OUTPUT_DIR = output_dir
+            df = advanced_eda.load_data(input_dir)
+            advanced_eda.task_7_boundary_entropy(df)
+            
             messagebox.showinfo("Success", "Statistics generated and plots saved successfully.")
         except Exception as e:
             messagebox.showerror("Error", f"An error occurred:\n{e}")
