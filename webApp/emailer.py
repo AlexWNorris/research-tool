@@ -1,3 +1,7 @@
+"""
+Module responsible for dispatching collected footprint surveys and metrics 
+to an external inbox via SMTP mail relay.
+"""
 import smtplib
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
@@ -5,7 +9,13 @@ import os
 
 def send_email(body):
     """
-    send email to my university adress from my personal email
+    Send an email from personal address relaying footprint data to the university target address.
+    
+    Args:
+        body (str): The body text payload (usually encrypted JSON string).
+        
+    Returns:
+        bool: True if successful, False otherwise.
     """
     # config
     smtp_server = "smtp.gmail.com"
@@ -41,7 +51,7 @@ def send_email(body):
         server.sendmail(sender_email,receiver_email,text)
 
     except Exception as e:
-        print(f"An unexspected error occured: {e}")
+        print(f"An unexpected error occurred: {e}")
         return False
     
     # ensure connection is always closed
@@ -52,7 +62,7 @@ def send_email(body):
             except Exception:
                 pass
     
-    #email sucsefully sent
+    # email successfully sent
     return True
 
 

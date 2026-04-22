@@ -1,3 +1,6 @@
+"""
+Utility handling the encryption of footprint dictionaries into string payloads.
+"""
 import json
 import os
 from cryptography.fernet import Fernet
@@ -7,7 +10,13 @@ cipher_suite = Fernet(_encryption_key)
 
 def encrypt_json(data):
     """
-    take json string and return encrypted string
+    Take a JSON object dictionary and encrypt it into a transport-safe string.
+    
+    Args:
+        data (dict): The footprint survey dictionary.
+        
+    Returns:
+        str: Encrypted string representation.
     """
     json_string = json.dumps(data)
     json_bytes = json_string.encode('utf-8')

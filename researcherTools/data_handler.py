@@ -1,3 +1,7 @@
+"""
+Data Handler module for loading, parsing, and providing access to fingerprint 
+survey responses and evaluating overarching risk metrics.
+"""
 import json
 import os
 import matplotlib.pyplot as plt

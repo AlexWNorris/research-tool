@@ -1,11 +1,18 @@
-import fileHandler
-import emailFinder
-from dataHandler import PilotDataHandler
+"""
+Graphical user interface tool using Tkinter to manage decryption, processing, 
+and graphical plot output generation for the research toolset.
+"""
+import file_handler
+import email_finder
+from data_handler import PilotDataHandler
 import tkinter as tk
 from tkinter import filedialog, messagebox
 from tkinter import ttk
 
 def main():
+    """
+    Initialize the Tkinter GUI interface logic and event loop.
+    """
     root = tk.Tk()
     root.title("Researcher Hub Tool")
     root.geometry("550x300")
@@ -39,7 +46,7 @@ def main():
             return
 
         try:
-            fileHandler.populate_decrypted_folder_from(input_dir, output_dir)
+            file_handler.populate_decrypted_folder_from(input_dir, output_dir)
             messagebox.showinfo("Success", "Files successfully decrypted and saved.")
         except Exception as e:
             messagebox.showerror("Error", f"An error occurred:\n{e}")

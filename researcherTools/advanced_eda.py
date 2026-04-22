@@ -1,3 +1,7 @@
+"""
+Advanced Exploratory Data Analysis module for parsing, evaluating, and visualizing 
+demographic entropy shifts and fingerprint duplications within the browser dataset.
+"""
 import os
 import json
 import numpy as np
@@ -33,6 +37,15 @@ plt.rcParams.update({'font.size': 12, 'figure.figsize': (10, 6), 'axes.titleweig
 # Data Loading & Preprocessing
 # ==========================================
 def load_data(data_dir=DATA_DIR):
+    """
+    Load data from decrypted directory.
+    
+    Args:
+        data_dir (str): Path to the decrypted JSON text files.
+        
+    Returns:
+        pd.DataFrame: A DataFrame containing flattened record statistics.
+    """
     records = []
     if not os.path.exists(data_dir):
         raise FileNotFoundError(f"Data directory {data_dir} does not exist.")
@@ -70,6 +83,12 @@ def load_data(data_dir=DATA_DIR):
 # Task 1: Feature-Level Entropy Analysis
 # ==========================================
 def task_1_entropy(df):
+    """
+    Perform feature-level entropy analysis to evaluate identifying properties of footprint fields.
+    
+    Args:
+        df (pd.DataFrame): Input dataframe containing features to evaluate.
+    """
     print("\n--- Running Task 1: Feature Entropy ---")
     feature_cols = [c for c in df.columns if c.startswith('feat_')]
     entropies = {}
@@ -94,6 +113,12 @@ def task_1_entropy(df):
 # Task 2: Duplicates Network Graph
 # ==========================================
 def task_2_network(df):
+    """
+    Construct a network graph to visualize exactly duplicated footprints across sessions.
+    
+    Args:
+        df (pd.DataFrame): Data containing footprint and demographic columns.
+    """
     print("\n--- Running Task 2: Duplicates Network Graph ---")
     G = nx.Graph()
     feature_cols = [c for c in df.columns if c.startswith('feat_')]
@@ -139,10 +164,27 @@ def task_2_network(df):
 # Task 3: Similarity & Sankey Diagram
 # ==========================================
 def calculate_jaccard(row1, row2, feature_cols):
+    """
+    Calculate simple Jaccard similarity index.
+    
+    Args:
+        row1 (pd.Series): First user fingerprint footprint vector.
+        row2 (pd.Series): Second user fingerprint footprint vector.
+        feature_cols (list): Fields to include in index matching.
+        
+    Returns:
+        float: Jaccard similarity scalar.
+    """
     matches = sum(1 for col in feature_cols if row1[col] == row2[col])
     return matches / len(feature_cols) if feature_cols else 0.0
 
 def task_3_sankey(df):
+    """
+    Generate an interactive sankey plot linking Income -> Education -> Uniqueness.
+    
+    Args:
+        df (pd.DataFrame): Base dataframe including demographics.
+    """
     print("\n--- Running Task 3: Similarity & Sankey Diagram ---")
     feature_cols = [c for c in df.columns if c.startswith('feat_')]
     similarities = [calculate_jaccard(df.iloc[u], df.iloc[v], feature_cols) for u, v in combinations(df.index, 2)]
@@ -188,6 +230,12 @@ def task_3_sankey(df):
 # Task 4: Uniqueness Waffle Chart
 # ==========================================
 def task_4_waffle(df):
+    """
+    Output a waffle plot charting overall count of unique to duplicate footprints.
+    
+    Args:
+        df (pd.DataFrame): Output demographics target dataframe.
+    """
     print("\n--- Running Task 4: Uniqueness Waffle Chart ---")
     if Waffle is None:
         print("Skipped because pywaffle is not installed.")
@@ -221,6 +269,12 @@ def task_4_waffle(df):
 # Task 5: Demographic Distribution Charts
 # ==========================================
 def task_5_demographics(df):
+    """
+    Assemble multi-axis distribution sunburst and parallel charts.
+    
+    Args:
+        df (pd.DataFrame): Records containing relevant demographics targets.
+    """
     print("\n--- Running Task 5: Demographic Distribution Charts ---")
     demo_df = df[['demo_age', 'demo_gender', 'demo_income', 'demo_education']].fillna('Unknown').copy()
     demo_df.columns = ['Age', 'Gender', 'Income', 'Education']
@@ -267,6 +321,13 @@ def task_5_demographics(df):
 # Task 6: Cumulative Uniqueness by Entropy
 # ==========================================
 def task_6_uniqueness_accumulation(df):
+    """
+    Measure accumulating percentage of uniqueness with incremental inclusion 
+    of top N identifying trace components.
+    
+    Args:
+        df (pd.DataFrame): Base dataframe of complete trace inputs.
+    """
     print("\n--- Running Task 6: Cumulative Uniqueness by Entropy ---")
     feature_cols = [c for c in df.columns if c.startswith('feat_')]
     entropies = {}
@@ -333,6 +394,13 @@ def task_6_uniqueness_accumulation(df):
 # Task 7: Demographic Boundary Entropy Shift Analysis
 # ==========================================
 def task_7_boundary_entropy(df):
+    """
+    Execute task 7 script detecting the demographic boundaries with the largest
+    entropy shifts for the browser parameters across properties.
+    
+    Args:
+        df (pd.DataFrame): Pre-processed data.
+    """
     print("\n--- Running Task 7: Demographic Boundary Entropy Shift Analysis ---")
     
     boundaries = {

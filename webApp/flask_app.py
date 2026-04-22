@@ -1,3 +1,7 @@
+"""
+Flask web application serving the data collection endpoints for footprinting 
+and survey gathering.
+"""
 import os
 import json
 import uuid
@@ -5,13 +9,14 @@ import hashlib
 from datetime import datetime
 from flask import Flask, render_template, request, session, redirect, url_for, jsonify, make_response
 from dotenv import load_dotenv
+
+load_dotenv()
+
 # my python files
 from emailer import send_email
 from encryptor import encrypt_json
 
 app = Flask(__name__)
-
-load_dotenv()
 _secret_key = os.environ.get('SECRET_KEY')
 if not _secret_key:
     if os.environ.get('FLASK_ENV') == 'production':

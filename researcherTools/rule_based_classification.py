@@ -1,3 +1,7 @@
+"""
+Module to formulate decision-tree classifiers mapping footprint traces to 
+demographic outcomes, effectively generating rule-based prediction vectors.
+"""
 import os
 import pandas as pd
 import numpy as np
@@ -7,7 +11,7 @@ from sklearn.model_selection import train_test_split
 from sklearn.metrics import accuracy_score, classification_report
 import matplotlib.pyplot as plt
 import advanced_eda
-from AglomoratedAnalysis import map_age, map_income, map_education, map_gender
+from aglomerated_analysis import map_age, map_income, map_education, map_gender
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 PLOTS_DIR = os.path.abspath(os.path.join(BASE_DIR, "..", "plots"))
@@ -15,13 +19,17 @@ AGLOMORATED_DIR = os.path.join(PLOTS_DIR, "aglomorated_analysis")
 SHIFTS_CSV_PATH = os.path.join(AGLOMORATED_DIR, "task7_boundary_shifts.csv")
 
 def main():
+    """
+    Execute the evaluation pipeline loading past entropy maps and fitting 
+    decision trees out of the most distinct attributes. Output final accuracy graphs.
+    """
     print("===============================================")
     print("Rule-Based Classification using Entropy Shifts")
     print("===============================================")
 
     # 1. Load the task 7 boundary shifts CSV to find the top 5 attributes for each demographic boundary.
     if not os.path.exists(SHIFTS_CSV_PATH):
-        print(f"Error: {SHIFTS_CSV_PATH} not found. Please run AglomoratedAnalysis.py first.")
+        print(f"Error: {SHIFTS_CSV_PATH} not found. Please run aglomerated_analysis.py first.")
         return
         
     shifts_df = pd.read_csv(SHIFTS_CSV_PATH)
@@ -48,7 +56,7 @@ def main():
         print("No records loaded. Terminating script.")
         return
 
-    # Apply the same demographic mapping as AglomoratedAnalysis.py to ensure the classes match
+    # Apply the same demographic mapping as aglomerated_analysis.py to ensure the classes match
     df['demo_age'] = df.get('demo_age', pd.Series(['Unknown']*len(df))).apply(map_age)
     df['demo_income'] = df.get('demo_income', pd.Series(['Unknown']*len(df))).apply(map_income)
     df['demo_education'] = df.get('demo_education', pd.Series(['Unknown']*len(df))).apply(map_education)

@@ -1,3 +1,6 @@
+"""
+Agglomerated analysis module for performing full demographic risk and EDA tasks.
+"""
 import os
 import pandas as pd
 
@@ -5,7 +8,7 @@ import pandas as pd
 import matplotlib
 matplotlib.use('Agg') # Run headless to prevent GUI errors over CLI execution
 
-from dataHandler import PilotDataHandler
+from data_handler import PilotDataHandler
 import advanced_eda 
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -17,11 +20,29 @@ if not os.path.exists(OUTPUT_DIR):
 
 # --- Mapping Functions ---
 def map_age(age):
+    """
+    Map raw age strings to broader categories (<=34, >=35).
+    
+    Args:
+        age (str): The raw age string.
+        
+    Returns:
+        str: Mapped age category.
+    """
     if pd.isna(age) or age == 'Unknown': return 'Unknown'
     if age in ['18-24', '25-34']: return '<=34'
     return '>=35'
 
 def map_income(income):
+    """
+    Map raw income strings to broader high/low categories.
+    
+    Args:
+        income (str): The raw income string.
+        
+    Returns:
+        str: Mapped income category.
+    """
     if pd.isna(income) or income == 'Unknown': return 'Unknown'
     if income == 'Prefer not to say': return 'Prefer not to say'
     low = ['Less than £15,000', '15,000 - £24,999', '£15,000 - £24,999', '£25,000 - £34,999', '£35,000 - £44,999', '£45,000 - £54,999']
@@ -29,17 +50,41 @@ def map_income(income):
     return '>= 55,000'
 
 def map_education(education):
+    """
+    Map raw education strings to University Level or Pre-University groups.
+    
+    Args:
+        education (str): The raw education string.
+        
+    Returns:
+        str: Mapped education category.
+    """
     if pd.isna(education) or education == 'Unknown': return 'Unknown'
     uni = ["Bachelor's Degree", "Postgraduate Degree", "Higher Education"]
     if education in uni: return 'University Level and Above'
     return 'Pre-University'
 
 def map_gender(gender):
+    """
+    Clean and filter gender data.
+    
+    Args:
+        gender (str): The raw gender string.
+        
+    Returns:
+        str: Mapped gender category.
+    """
     if pd.isna(gender) or gender == 'Unknown': return 'Unknown'
     if gender in ['Male', 'Female']: return gender
     return gender
 
 def plot_boundary_entropy_shifts(output_dir):
+    """
+    Plot the entropy shifts across predefined demographic boundaries.
+    
+    Args:
+        output_dir (str): Directory to save the plots.
+    """
     import seaborn as sns
     import matplotlib.pyplot as plt
     
@@ -71,7 +116,11 @@ def plot_boundary_entropy_shifts(output_dir):
         plt.close()
         print(f"Saved {demo} boundary entropy shift plot to: {plot_path}")
 
-def run_aglomorated_analysis():
+def run_agglomerated_analysis():
+    """
+    Run the full data analysis combining data processing, plot generation, 
+    EDA tasks, and Mann-Whitney U statistical significance tests.
+    """
     print("====================================")
     print("Full ANALYSIS SCRIPT initialized")
     print("====================================")
@@ -191,4 +240,4 @@ def run_aglomorated_analysis():
         print(f"\nSaved statistical test results table to: {csv_path}")
 
 if __name__ == "__main__":
-    run_aglomorated_analysis()
+    run_agglomerated_analysis()
