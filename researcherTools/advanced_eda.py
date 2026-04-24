@@ -20,9 +20,7 @@ except ImportError:
     print("Warning: Please install pywaffle to generate the Waffle Chart (pip install pywaffle).")
     Waffle = None
 
-# ==========================================
-# Configuration & Setup
-# ==========================================
+
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 DATA_DIR = os.path.join(BASE_DIR, "fullData", "decrypted")
 OUTPUT_DIR = os.path.join(BASE_DIR, "plots", "advanced_eda")
@@ -33,9 +31,7 @@ if not os.path.exists(OUTPUT_DIR):
 sns.set_theme(style="whitegrid", context="paper")
 plt.rcParams.update({'font.size': 12, 'figure.figsize': (10, 6), 'axes.titleweight': 'bold'})
 
-# ==========================================
-# Data Loading & Preprocessing
-# ==========================================
+
 def load_data(data_dir=DATA_DIR):
     """
     Load data from decrypted directory.
@@ -79,17 +75,15 @@ def load_data(data_dir=DATA_DIR):
     print(f"Loaded {len(df)} records with {len(df.columns)} flattened columns.")
     return df
 
-# ==========================================
-# Task 1: Feature-Level Entropy Analysis
-# ==========================================
-def task_1_entropy(df):
+
+def analyze_feature_entropy(df):
     """
     Perform feature-level entropy analysis to evaluate identifying properties of footprint fields.
     
     Args:
         df (pd.DataFrame): Input dataframe containing features to evaluate.
     """
-    print("\n--- Running Task 1: Feature Entropy ---")
+    print("\n--- Running Feature Entropy Analysis ---")
     feature_cols = [c for c in df.columns if c.startswith('feat_')]
     entropies = {}
     for col in feature_cols:
@@ -104,22 +98,20 @@ def task_1_entropy(df):
     plt.xlabel("Entropy (bits)",fontsize=16)
     plt.yticks(fontsize=16)
     plt.tight_layout()
-    output_path = os.path.join(OUTPUT_DIR, "task1_feature_entropy.png")
+    output_path = os.path.join(OUTPUT_DIR, "feature_entropy.png")
     plt.savefig(output_path, dpi=300)
     plt.close()
     print(f"Saved Feature Entropy Chart to: {output_path}")
 
-# ==========================================
-# Task 2: Duplicates Network Graph
-# ==========================================
-def task_2_network(df):
+
+def generate_duplicates_network(df):
     """
     Construct a network graph to visualize exactly duplicated footprints across sessions.
     
     Args:
         df (pd.DataFrame): Data containing footprint and demographic columns.
     """
-    print("\n--- Running Task 2: Duplicates Network Graph ---")
+    print("\n--- Running Duplicates Network Graph Generation ---")
     G = nx.Graph()
     feature_cols = [c for c in df.columns if c.startswith('feat_')]
     for idx, row in df.iterrows():
@@ -155,14 +147,12 @@ def task_2_network(df):
     plt.title("Fingerprint Collisions (Shared Exact Footprints)")
     plt.axis("off")
     plt.tight_layout()
-    output_path = os.path.join(OUTPUT_DIR, "task2_duplicates_network.png")
+    output_path = os.path.join(OUTPUT_DIR, "duplicates_network.png")
     plt.savefig(output_path, dpi=300)
     plt.close()
     print(f"Saved Network Graph to: {output_path}")
 
-# ==========================================
-# Task 3: Similarity & Sankey Diagram
-# ==========================================
+
 def calculate_jaccard(row1, row2, feature_cols):
     """
     Calculate simple Jaccard similarity index.
@@ -178,14 +168,14 @@ def calculate_jaccard(row1, row2, feature_cols):
     matches = sum(1 for col in feature_cols if row1[col] == row2[col])
     return matches / len(feature_cols) if feature_cols else 0.0
 
-def task_3_sankey(df):
+def generate_similarity_sankey(df):
     """
     Generate an interactive sankey plot linking Income -> Education -> Uniqueness.
     
     Args:
         df (pd.DataFrame): Base dataframe including demographics.
     """
-    print("\n--- Running Task 3: Similarity & Sankey Diagram ---")
+    print("\n--- Running Similarity & Sankey Diagram Generation ---")
     feature_cols = [c for c in df.columns if c.startswith('feat_')]
     similarities = [calculate_jaccard(df.iloc[u], df.iloc[v], feature_cols) for u, v in combinations(df.index, 2)]
     avg_sim = np.mean(similarities) if similarities else 0
@@ -222,21 +212,19 @@ def task_3_sankey(df):
         link = dict(source=source, target=target, value=value, color="rgba(169, 169, 169, 0.4)")
     )])
     fig.update_layout(title_text="Flow Analysis: Demographics vs Fingerprint Uniqueness", height=700, width=1000)
-    output_path = os.path.join(OUTPUT_DIR, "task3_sankey.html")
+    output_path = os.path.join(OUTPUT_DIR, "similarity_sankey.html")
     fig.write_html(output_path)
     print(f"Saved Interactive Sankey Diagram to: {output_path}")
 
-# ==========================================
-# Task 4: Uniqueness Waffle Chart
-# ==========================================
-def task_4_waffle(df):
+
+def generate_uniqueness_waffle(df):
     """
     Output a waffle plot charting overall count of unique to duplicate footprints.
     
     Args:
         df (pd.DataFrame): Output demographics target dataframe.
     """
-    print("\n--- Running Task 4: Uniqueness Waffle Chart ---")
+    print("\n--- Running Uniqueness Waffle Chart ---")
     if Waffle is None:
         print("Skipped because pywaffle is not installed.")
         return
@@ -260,22 +248,20 @@ def task_4_waffle(df):
         figsize=(12, 6),
         title={'label': 'Overall Fingerprint Uniqueness Representation', 'loc': 'center', 'fontsize': 18, 'pad': 20}
     )
-    output_path = os.path.join(OUTPUT_DIR, "task4_uniqueness_waffle.png")
+    output_path = os.path.join(OUTPUT_DIR, "uniqueness_waffle.png")
     plt.savefig(output_path, dpi=300, bbox_inches='tight')
     plt.close()
     print(f"Saved Unique/Duplicate Waffle Chart to: {output_path}")
 
-# ==========================================
-# Task 5: Demographic Distribution Charts
-# ==========================================
-def task_5_demographics(df):
+
+def generate_demographic_charts(df):
     """
     Assemble multi-axis distribution sunburst and parallel charts.
     
     Args:
         df (pd.DataFrame): Records containing relevant demographics targets.
     """
-    print("\n--- Running Task 5: Demographic Distribution Charts ---")
+    print("\n--- Running Demographic Distribution Charts ---")
     demo_df = df[['demo_age', 'demo_gender', 'demo_income', 'demo_education']].fillna('Unknown').copy()
     demo_df.columns = ['Age', 'Gender', 'Income', 'Education']
     
@@ -290,7 +276,7 @@ def task_5_demographics(df):
         font=dict(size=26),
         title_font=dict(size=24)
     )
-    parallel_path = os.path.join(OUTPUT_DIR, "task5_demographics_parallel.html")
+    parallel_path = os.path.join(OUTPUT_DIR, "demographics_parallel.html")
     fig_parallel.write_html(parallel_path)
     print(f"Saved Parallel Categories Diagram to: {parallel_path}")
     
@@ -312,15 +298,13 @@ def task_5_demographics(df):
         insidetextorientation='auto' 
     )
     
-    sunburst_path = os.path.join(OUTPUT_DIR, "task5_demographics_sunburst.html")
+    sunburst_path = os.path.join(OUTPUT_DIR, "demographics_sunburst.html")
     fig_sunburst.write_html(sunburst_path)
     print(f"Saved Sunburst Chart to: {sunburst_path}")
 
 
-# ==========================================
-# Task 6: Cumulative Uniqueness by Entropy
-# ==========================================
-def task_6_uniqueness_accumulation(df):
+
+def analyze_cumulative_uniqueness(df):
     """
     Measure accumulating percentage of uniqueness with incremental inclusion 
     of top N identifying trace components.
@@ -328,7 +312,7 @@ def task_6_uniqueness_accumulation(df):
     Args:
         df (pd.DataFrame): Base dataframe of complete trace inputs.
     """
-    print("\n--- Running Task 6: Cumulative Uniqueness by Entropy ---")
+    print("\n--- Running Cumulative Uniqueness Analysis ---")
     feature_cols = [c for c in df.columns if c.startswith('feat_')]
     entropies = {}
     for col in feature_cols:
@@ -385,23 +369,21 @@ def task_6_uniqueness_accumulation(df):
     plt.legend(fontsize=12)
     
     plt.tight_layout()
-    output_path = os.path.join(OUTPUT_DIR, "task6_cumulative_uniqueness.png")
+    output_path = os.path.join(OUTPUT_DIR, "cumulative_uniqueness.png")
     plt.savefig(output_path, dpi=300)
     plt.close()
     print(f"Saved Cumulative Uniqueness Graph to: {output_path}")
 
-# ==========================================
-# Task 7: Demographic Boundary Entropy Shift Analysis
-# ==========================================
-def task_7_boundary_entropy(df):
+
+def analyze_boundary_entropy(df):
     """
-    Execute task 7 script detecting the demographic boundaries with the largest
+    Execute script detecting the demographic boundaries with the largest
     entropy shifts for the browser parameters across properties.
     
     Args:
         df (pd.DataFrame): Pre-processed data.
     """
-    print("\n--- Running Task 7: Demographic Boundary Entropy Shift Analysis ---")
+    print("\n--- Running Demographic Boundary Entropy Shift Analysis ---")
     
     boundaries = {
         'Age': ['<=34', '>=35'],
@@ -478,29 +460,27 @@ def task_7_boundary_entropy(df):
         print("=" * 110)
         
         all_df = pd.DataFrame(all_results)
-        csv_path = os.path.join(OUTPUT_DIR, "task7_boundary_shifts.csv")
+        csv_path = os.path.join(OUTPUT_DIR, "boundary_shifts.csv")
         all_df.to_csv(csv_path, index=False)
         print(f"Saved comprehensive boundary shifts analysis to: {csv_path}")
     else:
         print("No valid boundaries found or not enough data to compare adjacent boundaries.")
 
-# ==========================================
-# Main Execution Trigger
-# ==========================================
+
 if __name__ == "__main__":
     print("Initializing Exploratory Data Analysis Pipeline...")
     try:
         df_records = load_data()
         
         if len(df_records) > 0:
-            task_1_entropy(df_records)
-            task_2_network(df_records)
-            task_3_sankey(df_records)
-            task_4_waffle(df_records)
-            task_5_demographics(df_records)
-            task_6_uniqueness_accumulation(df_records)
-            task_7_boundary_entropy(df_records)
-            print("\n*** ALL EDA TASKS COMPLETED SUCCESSFULLY ***")
+            analyze_feature_entropy(df_records)
+            generate_duplicates_network(df_records)
+            generate_similarity_sankey(df_records)
+            generate_uniqueness_waffle(df_records)
+            generate_demographic_charts(df_records)
+            analyze_cumulative_uniqueness(df_records)
+            analyze_boundary_entropy(df_records)
+            print("\n*** ALL EDA ANALYSES COMPLETED SUCCESSFULLY ***")
         else:
             print("No records loaded. Terminating script.")
     except Exception as e:
