@@ -169,14 +169,14 @@ def run_agglomerated_analysis():
     df['demo_gender'] = df.get('demo_gender', pd.Series(['Unknown']*len(df))).apply(map_gender)
     
     if len(df) > 0:
-        advanced_eda.task_1_entropy(df)
-        advanced_eda.task_2_network(df)
-        advanced_eda.task_3_sankey(df)
-        advanced_eda.task_4_waffle(df)
-        advanced_eda.task_5_demographics(df)
-        advanced_eda.task_6_uniqueness_accumulation(df)
-        advanced_eda.task_7_boundary_entropy(df)
-        print("\n*** ALL AGLOMORATED EDA TASKS COMPLETED SUCCESSFULLY ***")
+        advanced_eda.analyze_feature_entropy(df)
+        advanced_eda.generate_duplicates_network(df)
+        advanced_eda.generate_similarity_sankey(df)
+        advanced_eda.generate_uniqueness_waffle(df)
+        advanced_eda.generate_demographic_charts(df)
+        advanced_eda.analyze_cumulative_uniqueness(df)
+        advanced_eda.analyze_boundary_entropy(df)
+        print("\n*** ALL AGLOMORATED EDA ANALYSES COMPLETED SUCCESSFULLY ***")
         
         # Generate the requested 4 diagram figure for entropy changes
         plot_boundary_entropy_shifts(OUTPUT_DIR)
