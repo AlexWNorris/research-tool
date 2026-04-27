@@ -13,7 +13,7 @@ import advanced_eda
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 DATA_DIR = os.path.abspath(os.path.join(BASE_DIR, "..", "fullData", "decrypted"))
-OUTPUT_DIR = os.path.abspath(os.path.join(BASE_DIR, "..", "plots", "aglomorated_analysis"))
+OUTPUT_DIR = os.path.abspath(os.path.join(BASE_DIR, "..", "plots", "agglomerated_analysis"))
 
 if not os.path.exists(OUTPUT_DIR):
     os.makedirs(OUTPUT_DIR)
@@ -88,7 +88,7 @@ def plot_boundary_entropy_shifts(output_dir):
     import seaborn as sns
     import matplotlib.pyplot as plt
     
-    csv_path = os.path.join(output_dir, "task7_boundary_shifts.csv")
+    csv_path = os.path.join(output_dir, "boundary_shifts.csv")
     if not os.path.exists(csv_path):
         print("Boundary shifts CSV not found. Cannot plot entropy shifts.")
         return
@@ -176,7 +176,7 @@ def run_agglomerated_analysis():
         advanced_eda.generate_demographic_charts(df)
         advanced_eda.analyze_cumulative_uniqueness(df)
         advanced_eda.analyze_boundary_entropy(df)
-        print("\n*** ALL AGLOMORATED EDA ANALYSES COMPLETED SUCCESSFULLY ***")
+        print("\n*** ALL AGGLOMERATED EDA ANALYSES COMPLETED SUCCESSFULLY ***")
         
         # Generate the requested 4 diagram figure for entropy changes
         plot_boundary_entropy_shifts(OUTPUT_DIR)
